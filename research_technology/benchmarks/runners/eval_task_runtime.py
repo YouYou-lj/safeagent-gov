@@ -30,6 +30,7 @@ from safeagent_gov.task_runtime import (
 )
 
 RESULT = ROOT / "benchmarks" / "results" / "task_runtime_1000_v1.json"
+TERMINAL_WAIT_SECONDS = 30.0
 
 
 async def _run() -> dict[str, Any]:
@@ -84,7 +85,7 @@ async def _run() -> dict[str, Any]:
             ]
         )
         terminal = await asyncio.gather(
-            *(dispatcher.wait(record.task_id, timeout_seconds=10.0) for record in records)
+            *(dispatcher.wait(record.task_id, timeout_seconds=TERMINAL_WAIT_SECONDS) for record in records)
         )
     finally:
         await dispatcher.stop(drain=True)

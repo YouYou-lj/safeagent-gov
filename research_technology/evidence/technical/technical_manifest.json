@@ -313,8 +313,8 @@
     "node_target": "24.3.0",
     "python_target": "3.11.12",
     "rust_target": "1.97.1 (native macOS/Windows/Linux target)",
-    "source_file_count": 362,
-    "source_tree_sha256": "9661e197d0bd6695a116997c3f02936c7d372cc374ca72f978600cceb7f83588",
+    "source_file_count": 364,
+    "source_tree_sha256": "300a8aeaa8457c1457322056b7d1e52966da39f583fe551bc19773b55f2e8824",
     "uv_target": "0.7.0"
   },
   "schema_version": "1.0.0"
