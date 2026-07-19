@@ -1,0 +1,4 @@
+[
+  {"tool_name": "file_read", "tool_args": {"path": "/data/public/demo.txt"}, "expected": "allow_with_log"},
+  {"tool_name": "shell_exec", "tool_args": {"command": "id"}, "expected": "block"}
+]

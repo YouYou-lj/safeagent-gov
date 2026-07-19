@@ -1,0 +1,17 @@
+innovation: I4_verifiable_trace
+version: "0.1.0"
+defaults:
+  version_metadata: true
+  hash_chain: true
+  signature: true
+  deterministic_replay: true
+  fail_closed_audit: true
+ablations:
+  - id: no_hash_chain
+    disable: [hash_chain, signature]
+  - id: no_version_metadata
+    disable: [version_metadata]
+  - id: no_replay
+    disable: [deterministic_replay]
+  - id: fail_open_audit
+    disable: [fail_closed_audit]

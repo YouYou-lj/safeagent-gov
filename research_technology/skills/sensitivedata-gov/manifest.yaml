@@ -1,0 +1,21 @@
+name: sensitivedata-gov
+version: "1.0.0"
+category: security
+execution_mode: mandatory
+trigger_stages: [before_external_send, before_data_export]
+entrypoint: src/detector.py:detect_sensitive_data
+inputs: [content, destination, operation, data_labels, allow_masking]
+required_inputs: [content]
+outputs: [decision, risk_level, reason, findings, sanitized_content, data_labels, policy_hits, policy_version]
+required_outputs: [decision, risk_level, reason, findings, sanitized_content, data_labels, policy_hits, policy_version]
+timeout_seconds: 3
+retries: 1
+failure_policy: block
+enabled: true
+policies:
+  rules: policies/sensitive_data_rules.yaml
+permissions:
+  network_access: false
+  file_read: policy_only
+  file_write: false
+  shell_exec: false

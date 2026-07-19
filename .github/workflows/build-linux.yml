@@ -1,0 +1,72 @@
+name: build-linux
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "desktop/**"
+      - "frontend-vue/**"
+      - "backend/**"
+      - "safeagent_gov/**"
+      - "agent_demo/**"
+      - "configs/**"
+      - "integrations/**"
+      - "scripts/**"
+      - "skills/**"
+      - "mcp/**"
+      - "benchmarks/**"
+      - "eval/**"
+      - "research_technology/skills/**"
+      - "research_technology/mcp/**"
+      - "research_technology/evaluation/**"
+      - "research_technology/benchmarks/**"
+      - "pyproject.toml"
+      - "requirements*.txt"
+      - "requirements*.lock"
+      - "uv.lock"
+      - ".python-version"
+      - ".uv-version"
+      - ".github/workflows/build-linux.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Linux desktop build dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install -y --no-install-recommends
+          build-essential curl file libayatana-appindicator3-dev librsvg2-dev
+          libssl-dev libwebkit2gtk-4.1-dev libxdo-dev patchelf pkg-config wget
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.7.0"
+          enable-cache: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24.3.0"
+          cache: npm
+          cache-dependency-path: |
+            frontend-vue/package-lock.json
+            desktop/package-lock.json
+      - name: Build isolated Python environment
+        run: python3 scripts/setup_uv_env.py
+      - name: Install locked frontend and desktop dependencies
+        run: |
+          npm ci --prefix frontend-vue --ignore-scripts --no-audit --no-fund
+          npm ci --prefix desktop --ignore-scripts --no-audit --no-fund
+      - name: Build native Linux packages
+        run: bash desktop/linux/build-linux.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: safeagent-gov-linux
+          path: |
+            release/linux/*.AppImage
+            release/linux/*.deb
+          if-no-files-found: error

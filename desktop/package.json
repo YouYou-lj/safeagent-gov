@@ -1,0 +1,19 @@
+{
+  "name": "safeagent-gov-desktop",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "tauri": "node scripts/python_runner.mjs scripts/run_tauri.py",
+    "dev": "npm run sidecar:build && npm run tauri -- dev",
+    "build": "node scripts/python_runner.mjs ../scripts/build_desktop.py",
+    "sidecar:build": "node scripts/python_runner.mjs scripts/build_sidecar.py",
+    "sidecar:verify": "node scripts/python_runner.mjs scripts/verify_sidecar.py"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.4"
+  }
+}

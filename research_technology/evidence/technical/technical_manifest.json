@@ -1,0 +1,321 @@
+{
+  "dataset_versions": [
+    {
+      "name": "agentseceval_scale_v1",
+      "path": "research_technology/benchmarks/datasets/agentseceval_scale_v1/manifest.yaml",
+      "sha256": "eafda9b402fb0255dd7b06ebf852ee0110f4cc3aa0dbcd6021a45d042afea757",
+      "version": "1.0.0"
+    },
+    {
+      "name": "four_scenarios_v1",
+      "path": "research_technology/benchmarks/datasets/four_scenarios_v1/manifest.yaml",
+      "sha256": "6be4ba7e3110b17ec036709462a25c1346a9a2f1256f9b40b50e38fa13831122",
+      "version": "1.0.0"
+    },
+    {
+      "name": "graphify_cases_v1",
+      "path": "research_technology/benchmarks/datasets/graphify_cases_v1/manifest.yaml",
+      "sha256": "5b7c3803d9b89afe4af4ec765ad868fe5556d43bf4cfbde5ec59d32096c73744",
+      "version": "1.0.0"
+    },
+    {
+      "name": "mcpguard_holdout_v1",
+      "path": "research_technology/benchmarks/datasets/mcpguard_holdout_v1/manifest.yaml",
+      "sha256": "cfb77bbf9cd571a87076c925a4e89b424d33367dd2e1ebcc2459d783c82f743d",
+      "version": "1.0.0"
+    },
+    {
+      "name": "promptshield_dev_v1",
+      "path": "research_technology/benchmarks/datasets/promptshield_dev_v1/manifest.yaml",
+      "sha256": "db55490809bdb13d21d97ab5d0417c718fa402ec76a261d07875ae7cdc0fa9db",
+      "version": "1.0.0"
+    },
+    {
+      "name": "promptshield_holdout_v1",
+      "path": "research_technology/benchmarks/datasets/promptshield_holdout_v1/manifest.yaml",
+      "sha256": "19eabc291637a10665a258a4249f818b7ad6fec1ccfb6593adcdfde2b7327267",
+      "version": "1.0.0"
+    },
+    {
+      "name": "router_cases_v1",
+      "path": "research_technology/benchmarks/datasets/router_cases_v1/manifest.yaml",
+      "sha256": "612bfc5b50de79efbc64cf3ee4c1ca5a149ca6cd60f0e1c88bd1320e9097cb2f",
+      "version": "1.0.0"
+    },
+    {
+      "name": "skillscan_holdout_v1",
+      "path": "research_technology/benchmarks/datasets/skillscan_holdout_v1/manifest.yaml",
+      "sha256": "8ed381e77c087672a5c9cd703bb0c760392fcf4d8620e794a76b05ebd7092f40",
+      "version": "1.0.0"
+    },
+    {
+      "name": "traceaudit_holdout_v1",
+      "path": "research_technology/benchmarks/datasets/traceaudit_holdout_v1/manifest.yaml",
+      "sha256": "1a957ff4a38ce28113f2784fc24522d87e2cd123d91638c362172bbbf5c87286",
+      "version": "1.0.0"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "research_technology/benchmarks/results/agentseceval_full_v1.json",
+      "sha256": "306d60a0d6482a3ad564410843b72d73009c5c471f5cc663d8f3a073036c379d"
+    },
+    {
+      "path": "research_technology/benchmarks/results/agentseceval_scale_v1.json",
+      "sha256": "82ff7f8a398c58ef17e6f9dcfbfc1c512803c026ae751ac47218297b755a4e30"
+    },
+    {
+      "path": "research_technology/benchmarks/results/agentseceval_smoke_v1.json",
+      "sha256": "7ffa0269aeb6724aed970a9db9b0e71958bbd4e0f13962b4dbbba01c12d5362c"
+    },
+    {
+      "path": "research_technology/benchmarks/results/distributed_recovery_v1.json",
+      "sha256": "49f7234239fe809416ce7ecb7d6c9fc4fa96b1dfef1ae73492a22391db5ad8df"
+    },
+    {
+      "path": "research_technology/benchmarks/results/engineering_resilience_v1.json",
+      "sha256": "a4634d7d9c86da5ef2b0ea566015c48b2c5333068f6755004c300fc1ce87731c"
+    },
+    {
+      "path": "research_technology/benchmarks/results/external_agent_integration_v1.json",
+      "sha256": "74a76d046c90180df273073bb261b9deed59f1ac780b80b6e23d3112bfe06065"
+    },
+    {
+      "path": "research_technology/benchmarks/results/four_scenarios_v1.json",
+      "sha256": "70950ef995274f137b72240138efc5775a4b874eaf221ed8ba511f9017fd065e"
+    },
+    {
+      "path": "research_technology/benchmarks/results/graphify_eval_v1.json",
+      "sha256": "15c4c85a33b02d2f77261bfd5f6a8275a8942853e97c41b2429497bff06fccd7"
+    },
+    {
+      "path": "research_technology/benchmarks/results/mcpguard_holdout_v1.json",
+      "sha256": "72ef6c8ebf8ed4e9f850a28ccfecb6ecaf8f00c9ccf222d6d3600ea5f9e66859"
+    },
+    {
+      "path": "research_technology/benchmarks/results/model_gateway_eval_v1.json",
+      "sha256": "f13d7c3727e0c2252ef34dee830861502fb370759a1018ff807ab7ce639868dc"
+    },
+    {
+      "path": "research_technology/benchmarks/results/promptshield_holdout_v1.json",
+      "sha256": "686e2ec05bbf1f2aec3ea3c4556918cd2391cc0e601d5456ed556252d2e6de6b"
+    },
+    {
+      "path": "research_technology/benchmarks/results/promptshield_threshold_curve_v1.json",
+      "sha256": "084a7314f7dd2ea3e6130db88d950852b67a4702af4d4e31894214c5428681cf"
+    },
+    {
+      "path": "research_technology/benchmarks/results/router_eval_v1.json",
+      "sha256": "0cec3f56c6783d17cc6cc4ba7d48aa70622a118e77f418f518951828741c3ddd"
+    },
+    {
+      "path": "research_technology/benchmarks/results/skillscan_holdout_v1.json",
+      "sha256": "4d532ce5d05b6c140124337a2effd5d7b20cdf5f304479b48d91229e5fd918fc"
+    },
+    {
+      "path": "research_technology/benchmarks/results/task_runtime_1000_v1.json",
+      "sha256": "da9fe1bbddaa18b5b41a0d7d739e43c13d86fa588817bcbc91e647d04b5e7a19"
+    },
+    {
+      "path": "research_technology/benchmarks/results/traceaudit_holdout_v1.json",
+      "sha256": "c258377f5f37dfff87cbe601f50a5d8f8af2c63e4474ae2bdc4c302af1c46cd1"
+    }
+  ],
+  "external_integrations": [
+    {
+      "compatibility_claim": "vendor-neutral planning-only contract; not official Dify/OpenClaw protocol certification",
+      "evidence": "research_technology/benchmarks/results/external_agent_integration_v1.json",
+      "execution_authority": false,
+      "name": "safeagent-reference-tool-agent",
+      "protocol_version": "1.0.0",
+      "transport": "real_loopback_http_child_process"
+    }
+  ],
+  "model_gateway_registry": {
+    "path": "configs/model_gateway.yaml",
+    "provider_count": 13,
+    "sha256": "f53e0a065ac7a84ad7c6efe03f011bf677142ebcdd7034fdb9abeefcd7b20c59",
+    "version": "1.0.0"
+  },
+  "models": [
+    {
+      "enabled": false,
+      "model": "configured-claude-model",
+      "name": "anthropic",
+      "private_deployment": false,
+      "protocol": "anthropic_messages",
+      "status": "profile_disabled_protocol_adapter_verified_not_claimed_as_live"
+    },
+    {
+      "enabled": false,
+      "model": "configured-bedrock-model",
+      "name": "aws-bedrock",
+      "private_deployment": true,
+      "protocol": "aws_bedrock",
+      "status": "profile_disabled_protocol_adapter_verified_not_claimed_as_live"
+    },
+    {
+      "enabled": false,
+      "model": "configured-azure-deployment",
+      "name": "azure-openai",
+      "private_deployment": true,
+      "protocol": "azure_openai",
+      "status": "profile_disabled_protocol_adapter_verified_not_claimed_as_live"
+    },
+    {
+      "enabled": false,
+      "model": "deepseek-chat",
+      "name": "deepseek",
+      "private_deployment": false,
+      "protocol": "openai_chat_completions",
+      "status": "profile_disabled_protocol_adapter_verified_not_claimed_as_live"
+    },
+    {
+      "enabled": true,
+      "model": "safeagent-deterministic-v1",
+      "name": "deterministic",
+      "private_deployment": true,
+      "protocol": "internal",
+      "status": "verified_offline_baseline"
+    },
+    {
+      "enabled": false,
+      "model": "configured-gemini-model",
+      "name": "gemini",
+      "private_deployment": false,
+      "protocol": "gemini_generate_content",
+      "status": "profile_disabled_protocol_adapter_verified_not_claimed_as_live"
+    },
+    {
+      "enabled": false,
+      "model": "configured-kimi-model",
+      "name": "kimi",
+      "private_deployment": false,
+      "protocol": "openai_chat_completions",
+      "status": "profile_disabled_protocol_adapter_verified_not_claimed_as_live"
+    },
+    {
+      "enabled": false,
+      "model": "configured-local-model",
+      "name": "ollama",
+      "private_deployment": true,
+      "protocol": "ollama_chat",
+      "status": "profile_disabled_protocol_adapter_verified_not_claimed_as_live"
+    },
+    {
+      "enabled": false,
+      "model": "configured-openai-chat-model",
+      "name": "openai-chat",
+      "private_deployment": false,
+      "protocol": "openai_chat_completions",
+      "status": "profile_disabled_protocol_adapter_verified_not_claimed_as_live"
+    },
+    {
+      "enabled": false,
+      "model": "configured-openai-responses-model",
+      "name": "openai-responses",
+      "private_deployment": false,
+      "protocol": "openai_responses",
+      "status": "profile_disabled_protocol_adapter_verified_not_claimed_as_live"
+    },
+    {
+      "enabled": false,
+      "model": "configured-qwen-model",
+      "name": "qwen",
+      "private_deployment": false,
+      "protocol": "openai_chat_completions",
+      "status": "profile_disabled_protocol_adapter_verified_not_claimed_as_live"
+    },
+    {
+      "enabled": false,
+      "model": "configured-vertex-model",
+      "name": "vertex-ai",
+      "private_deployment": true,
+      "protocol": "vertex_ai",
+      "status": "profile_disabled_protocol_adapter_verified_not_claimed_as_live"
+    },
+    {
+      "enabled": false,
+      "model": "configured-private-model",
+      "name": "vllm",
+      "private_deployment": true,
+      "protocol": "vllm_openai_compatible",
+      "status": "profile_disabled_protocol_adapter_verified_not_claimed_as_live"
+    },
+    {
+      "name": "SAFEAGENT_DIFY_WORKFLOW",
+      "protocol": "external_dify_legacy_planning_only",
+      "status": "configuration_required_not_claimed_as_live"
+    },
+    {
+      "name": "safeagent-reference-tool-agent@1.0.0",
+      "protocol": "vendor_neutral_external_agent_over_loopback_http",
+      "status": "verified"
+    }
+  ],
+  "policy_versions": [
+    {
+      "name": "2.0.0",
+      "path": "research_technology/mcp/policies/versions/2.0.0.yaml",
+      "sha256": "a6365a3bbb27e91802aeecfe83630f439ad5b060a096caad209c7239b8a83719",
+      "version": "2.0.0"
+    },
+    {
+      "name": "2.1.0",
+      "path": "research_technology/mcp/policies/versions/2.1.0.yaml",
+      "sha256": "649f9cdeda4541de3cadeb49f642ff45cc50e1918b8c0b19eff3fff997f8aac1",
+      "version": "2.1.0"
+    }
+  ],
+  "project": {
+    "name": "safeagent-gov",
+    "version": "0.2.0"
+  },
+  "reproducibility": {
+    "container_images": [
+      "nginx:1.28.1-alpine@sha256:52e3ada4d978443601f286cc2f9e7b95c82aa3ad5a78ce9c6b94ce00258e68cc",
+      "node:24.3.0-alpine@sha256:b8ea75e6dcdf7dbba1ea8b57f77ec89ef04c1719d2ae986c8fbea21f9f4ec187",
+      "python:3.11-slim@sha256:db3ff2e1800a8581e2c48a27c3995339d47bdf046da21c7627accd3d51053a93",
+      "redis:8.2.3-alpine@sha256:08ad0b1d280850169a790dba1393ff7a90aef951fc19632cf4d3ce4f78e679ba"
+    ],
+    "lockfiles": [
+      {
+        "dependency_count": 53,
+        "path": "requirements.lock",
+        "sha256": "dd3217cfa24737a3f7887ab00aee16f59c81cd334e5f1d46da4d70a2ee5abfd5"
+      },
+      {
+        "dependency_count": 30,
+        "path": "requirements-dev.lock",
+        "sha256": "c45557dcb99611a3629a2f686b83d15db6a56bdcb678e2c43586b3b49d0f1586"
+      },
+      {
+        "dependency_count": 85,
+        "path": "uv.lock",
+        "sha256": "a94a21705e2ee9d9dd85bb242126f94912a2f6dee4156ef7e987afb9c6117769"
+      },
+      {
+        "dependency_count": 394,
+        "path": "frontend-vue/package-lock.json",
+        "sha256": "42e25e401e157034275358716c971f197105ffb92e971ff5f2af286adb6cdb01"
+      },
+      {
+        "dependency_count": 12,
+        "path": "desktop/package-lock.json",
+        "sha256": "03b211d9489b4b811c0404195a0e339fd557df4fd48a2f35ae811f6242b92fd6"
+      },
+      {
+        "dependency_count": 440,
+        "path": "desktop/src-tauri/Cargo.lock",
+        "sha256": "12ee5c397a47d7e0ccf3bb201f8b627d346f18357541e634ef7b78db0fb00300"
+      }
+    ],
+    "node_target": "24.3.0",
+    "python_target": "3.11.12",
+    "rust_target": "1.97.1 (native macOS/Windows/Linux target)",
+    "source_file_count": 362,
+    "source_tree_sha256": "9661e197d0bd6695a116997c3f02936c7d372cc374ca72f978600cceb7f83588",
+    "uv_target": "0.7.0"
+  },
+  "schema_version": "1.0.0"
+}

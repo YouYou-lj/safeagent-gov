@@ -1,0 +1,15 @@
+innovation: I1_provenance_risk_graph
+version: "0.1.0"
+defaults:
+  provenance_metadata: true
+  evidence_graph: true
+  temporal_edges: true
+  risk_propagation: true
+  classifier_layer: true
+ablations:
+  - id: no_provenance
+    disable: [provenance_metadata]
+  - id: no_graph
+    disable: [evidence_graph, temporal_edges, risk_propagation]
+  - id: no_classifier
+    disable: [classifier_layer]

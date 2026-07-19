@@ -1,0 +1,7 @@
+name: api
+version: "1.0.0"
+simulation_only: true
+capabilities: [api_call]
+security:
+  network_access: false
+  body_logged_as_field_names_only: true

@@ -1,0 +1,30 @@
+version: "1.0.0"
+internal_domains: [gov.cn, xiongan.gov.cn]
+sensitive_labels: [internal, personal, restricted, secret]
+patterns:
+  credential:
+    regex: '(?i)(?:api[_ -]?key|token|password|secret)\s*[:=]\s*[^\s,;]{4,}'
+    risk_level: critical
+    replacement: '[REDACTED_CREDENTIAL]'
+  id_card:
+    regex: '(?<!\d)\d{17}[0-9Xx](?!\d)'
+    risk_level: high
+    replacement: '[REDACTED_ID]'
+  phone_number:
+    regex: '(?<!\d)1[3-9]\d{9}(?!\d)'
+    risk_level: high
+    replacement: '[REDACTED_PHONE]'
+  email_address:
+    regex: '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+    risk_level: medium
+    replacement: '[REDACTED_EMAIL]'
+  internal_marker:
+    regex: '(?:内部资料|内部人员|机密|秘密级|仅限内部|未公开数据)'
+    risk_level: high
+    replacement: '[REDACTED_INTERNAL]'
+actions:
+  credential: block
+  external_sensitive: require_approval
+  maskable_external: mask_and_allow
+  internal_sensitive: allow_with_log
+  no_sensitive_data: allow

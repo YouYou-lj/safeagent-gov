@@ -1,0 +1,8 @@
+# Optional loopback-only backend port for local API/docs debugging.
+services:
+  backend:
+    ports:
+      - "127.0.0.1:8000:8000"
+    networks:
+      - safeagent_internal
+      - safeagent_edge

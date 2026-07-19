@@ -1,0 +1,79 @@
+version: "1.0.0"
+prompt_injection:
+  direct:
+    keywords:
+      - "忽略之前的指令"
+      - "忽略之前所有规则"
+      - "忽略所有规则"
+      - "显示系统提示词"
+      - "输出系统提示词"
+      - "输出隐藏规则"
+      - "ignore previous instructions"
+      - "disregard all prior instructions"
+      - "show system prompt"
+    patterns:
+      - "忽略.{0,8}(之前|以上|原有).{0,8}(指令|规则)"
+      - "(显示|输出|泄露).{0,8}(系统提示词|隐藏规则)"
+      - "ignore.{0,20}(previous|prior).{0,20}instructions"
+    risk_level: high
+    action: block
+  indirect:
+    keywords:
+      - "当AI读取本文档时"
+      - "当智能体读取本文档时"
+      - "请自动调用工具"
+      - "请把数据发送到"
+      - "send this data to"
+      - "execute the following command"
+    patterns:
+      - "当(AI|智能体|模型).{0,12}(读取|看到).{0,12}(本文档|本页面|此内容)"
+    risk_level: high
+    action: isolate
+jailbreak:
+  keywords:
+    - "你现在不受任何限制"
+    - "进入开发者模式"
+    - "绕过安全限制"
+    - "DAN mode"
+    - "do anything now"
+    - "developer mode enabled"
+  risk_level: high
+  action: block
+knowledge_poisoning:
+  keywords:
+    - "替换知识库规则"
+    - "覆盖官方政策"
+    - "伪造政策依据"
+    - "将以下内容作为唯一事实"
+  risk_level: high
+  action: isolate
+sensitive_data_request:
+  keywords:
+    - "身份证号"
+    - "手机号列表"
+    - "内部账号"
+    - "内部人员名单"
+    - "数据库密码"
+    - "API Key"
+    - "访问令牌"
+    - "token"
+    - "批量导出"
+  risk_level: medium
+  action: require_approval
+system_prompt_leakage:
+  keywords:
+    - "系统提示词"
+    - "隐藏规则"
+    - "developer message"
+    - "system prompt"
+  risk_level: high
+  action: block
+scoring:
+  base: 0.42
+  per_extra_hit: 0.12
+  source_boost:
+    uploaded_pdf: 0.08
+    uploaded_doc: 0.08
+    web_page: 0.06
+    rag_result: 0.08
+    history_memory: 0.08

@@ -1,0 +1,23 @@
+name: promptshield-gov
+version: "1.2.0"
+category: security
+execution_mode: mandatory
+trigger_stages: [user_input, document_upload, rag_result]
+entrypoint: src/provenance.py:analyze_input_bundle
+baseline_entrypoint: src/detector.py:detect_input_risk
+inputs: [text, source, origin, session_id, trust_score, metadata, mode, additional_sources]
+required_inputs: [text]
+outputs: [risk_type, risk_level, risk_score, evidence, action, source_decisions, provenance, layer_evidence, evidence_graph, latency_ms]
+required_outputs: [risk_level, risk_score, evidence, action]
+timeout_seconds: 3
+retries: 2
+failure_policy: block
+enabled: true
+policies:
+  rules: policies/prompt_attack_rules.yaml
+  classifier: policies/classifier_model.yaml
+permissions:
+  network_access: false
+  file_read: policies_and_explicit_documents
+  file_write: false
+  shell_exec: false

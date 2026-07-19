@@ -1,0 +1,7 @@
+coverage>=7.6,<8.0
+fakeredis>=2.36,<2.37
+mypy>=1.14,<2.0
+pre-commit>=4.0,<5.0
+pytest-cov>=6.0,<8.0
+ruff>=0.11,<1.0
+types-PyYAML>=6.0.12,<7.0

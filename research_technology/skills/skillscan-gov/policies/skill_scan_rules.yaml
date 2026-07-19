@@ -1,0 +1,59 @@
+version: "2.0.0"
+dangerous_api:
+  command_execution:
+    - "os.system"
+    - "subprocess.Popen"
+    - "subprocess.call"
+    - "subprocess.run"
+    - "exec("
+    - "eval("
+    - "child_process.exec"
+  network_exfiltration:
+    - "requests.post"
+    - "requests.put"
+    - "fetch("
+    - "socket.connect"
+    - "http.client"
+    - "urllib.request"
+  sensitive_file_access:
+    - ".env"
+    - ".ssh"
+    - "id_rsa"
+    - "token"
+    - "secret"
+    - "password"
+    - "cookie"
+  obfuscation:
+    - "base64.b64decode"
+    - "compile("
+    - "__import__("
+    - "fromCharCode"
+    - "atob("
+  risky_dependencies:
+    - "python-nmap"
+    - "pycrypto"
+    - "shelljs"
+risk_score:
+  command_execution: 35
+  network_exfiltration: 30
+  sensitive_file_access: 25
+  obfuscation: 20
+  risky_dependencies: 20
+  permission_mismatch: 30
+  persistence: 30
+  dynamic_loading: 25
+  sensitive_data_flow: 35
+  vulnerable_dependency: 25
+  malicious_dependency: 45
+  typosquat_dependency: 35
+  parser_failure: 10
+limits:
+  max_files: 500
+  max_uncompressed_mb: 20
+  max_archive_mb: 10
+  max_single_file_kb: 1024
+  max_compression_ratio: 100
+  max_path_length: 240
+  max_source_tokens: 100000
+  max_syntax_depth: 200
+  scan_timeout_seconds: 10

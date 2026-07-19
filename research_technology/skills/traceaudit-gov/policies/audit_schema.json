@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SafeAgent-Gov Audit Trace",
+  "type": "object",
+  "required": ["trace_id", "schema_version", "user_input_hash", "events", "created_at", "integrity"],
+  "properties": {
+    "trace_id": {"type": "string"},
+    "schema_version": {"const": "2.0.0"},
+    "user_input": {"type": "string"},
+    "input_source": {"type": "string"},
+    "created_at": {"type": "string"},
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sequence", "stage", "event", "created_at", "event_version", "policy_version", "model_version", "dataset_version", "prev_hash", "event_hash", "event_signature"],
+        "properties": {
+          "sequence": {"type": "integer", "minimum": 1},
+          "stage": {"type": "string"},
+          "event": {"type": "object"},
+          "created_at": {"type": "string"},
+          "event_version": {"type": "string"},
+          "policy_version": {"type": "string"},
+          "model_version": {"type": "string"},
+          "dataset_version": {"type": "string"},
+          "prev_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "event_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "event_signature": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "required": ["valid", "event_count", "head_hash", "key_id", "issues"]
+    }
+  }
+}

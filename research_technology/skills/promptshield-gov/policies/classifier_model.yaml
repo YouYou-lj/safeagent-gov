@@ -1,0 +1,155 @@
+version: "0.1.0"
+model_type: interpretable_logistic_feature_model
+intercept: -4.2
+thresholds:
+  review: 0.55
+  high: 0.75
+feature_lexicons:
+  override_verb:
+    - "忽略"
+    - "无视"
+    - "跳过"
+    - "放一边"
+    - "覆盖"
+    - "override"
+    - "disregard"
+    - "forget"
+    - "bypass"
+  policy_object:
+    - "既有约束"
+    - "原有约束"
+    - "先前指令"
+    - "之前的指令"
+    - "安全规则"
+    - "安全限制"
+    - "prior instruction"
+    - "previous instruction"
+    - "safety rule"
+    - "policy"
+  disclosure_verb:
+    - "展示"
+    - "打印"
+    - "复述"
+    - "泄露"
+    - "公开"
+    - "reveal"
+    - "expose"
+    - "print"
+    - "repeat"
+  system_object:
+    - "最初配置"
+    - "内部指令"
+    - "隐藏指令"
+    - "系统配置"
+    - "system prompt"
+    - "developer message"
+    - "hidden instruction"
+  indirect_actor:
+    - "智能体"
+    - "模型"
+    - "助手"
+    - "agent"
+    - "assistant"
+    - "model"
+  read_context:
+    - "读取本文"
+    - "看到此页"
+    - "处理该文档"
+    - "检索到本段"
+    - "when reading"
+    - "when you see"
+    - "upon retrieval"
+  tool_verb:
+    - "调用工具"
+    - "执行命令"
+    - "上传数据"
+    - "发送数据"
+    - "invoke tool"
+    - "execute command"
+    - "send data"
+    - "upload data"
+  jailbreak_marker:
+    - "不受约束"
+    - "不受限制"
+    - "解除限制"
+    - "越狱模式"
+    - "unrestricted"
+    - "jailbreak mode"
+    - "no restrictions"
+  poison_marker:
+    - "唯一可信事实"
+    - "取代官方"
+    - "重写知识库"
+    - "废止原政策"
+    - "唯一政策依据"
+    - "replace official"
+    - "only trusted fact"
+    - "overwrite knowledge"
+  sensitive_object:
+    - "身份证"
+    - "手机号"
+    - "访问令牌"
+    - "密钥"
+    - "凭证"
+    - "password"
+    - "api key"
+    - "access token"
+    - "credential"
+  extraction_verb:
+    - "导出"
+    - "汇总"
+    - "发送"
+    - "上传"
+    - "复制"
+    - "export"
+    - "collect"
+    - "send"
+    - "upload"
+categories:
+  direct_prompt_injection:
+    weights:
+      override_verb: 1.4
+      policy_object: 1.4
+      disclosure_verb: 1.2
+      system_object: 1.2
+    interactions:
+      - all: [override_verb, policy_object]
+        weight: 3.0
+      - all: [disclosure_verb, system_object]
+        weight: 3.0
+    risk_level: high
+    action: block
+  indirect_prompt_injection:
+    weights:
+      indirect_actor: 1.2
+      read_context: 1.5
+      tool_verb: 1.4
+    interactions:
+      - all: [indirect_actor, tool_verb]
+        weight: 2.8
+      - all: [read_context, tool_verb]
+        weight: 3.0
+    risk_level: high
+    action: isolate
+  jailbreak:
+    weights:
+      jailbreak_marker: 6.0
+    interactions: []
+    risk_level: high
+    action: block
+  knowledge_poisoning:
+    weights:
+      poison_marker: 6.0
+    interactions: []
+    risk_level: high
+    action: isolate
+  sensitive_data_request:
+    weights:
+      sensitive_object: 1.5
+      extraction_verb: 1.3
+    interactions:
+      - all: [sensitive_object, extraction_verb]
+        weight: 2.4
+    risk_level: medium
+    action: require_approval
+normalization_flag_weight: 0.35

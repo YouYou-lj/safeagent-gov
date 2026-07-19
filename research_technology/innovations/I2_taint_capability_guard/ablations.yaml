@@ -1,0 +1,17 @@
+innovation: I2_taint_capability_guard
+version: "0.1.0"
+defaults:
+  capability_ticket: true
+  taint_tracking: true
+  transactional_approval: true
+  replay_protection: true
+  task_graph_detection: true
+ablations:
+  - id: no_ticket
+    disable: [capability_ticket]
+  - id: no_taint
+    disable: [taint_tracking]
+  - id: no_transaction
+    disable: [transactional_approval, replay_protection]
+  - id: no_task_graph
+    disable: [task_graph_detection]

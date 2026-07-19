@@ -1,0 +1,123 @@
+name: technical-quality
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 18 * * 0"
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.7.0"
+          enable-cache: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24.3.0"
+          cache: npm
+          cache-dependency-path: frontend-vue/package-lock.json
+      - name: Build isolated uv environment
+        run: ./scripts/setup_uv_env.sh
+      - name: Install locked Vue console dependencies
+        working-directory: frontend-vue
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Vue console lint, type check, tests and production build
+        working-directory: frontend-vue
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run test
+          npm run build
+      - name: Compile
+        run: ./scripts/uv_run.sh python -m compileall -q backend agent_demo integrations research_technology safeagent_gov tests
+      - name: Full lint
+        run: ./scripts/uv_run.sh python -m ruff check .
+      - name: Security boundary type check
+        run: >-
+          ./scripts/uv_run.sh python -m mypy
+          research_technology/mcp
+          safeagent_gov/graphify
+          safeagent_gov/router
+          safeagent_gov/skill_runtime
+          safeagent_gov/model_gateway
+          safeagent_gov/task_runtime
+          backend/api/graphify_api.py
+          backend/api/router_api.py
+          backend/api/skill_runtime_api.py
+          backend/api/model_api.py
+          backend/api/task_api.py
+          agent_demo/planners/model_gateway.py
+          agent_demo/langgraph_agent
+          agent_demo/adapters/external_agent.py
+          integrations/reference_agent
+      - name: Graphify mechanism benchmark when local cases are available
+        run: |
+          if [[ -f research_technology/benchmarks/datasets/graphify_cases_v1/cases.json ]]; then
+            ./scripts/uv_run.sh python research_technology/benchmarks/runners/eval_graphify.py
+          else
+            echo "Local Graphify evaluation cases are not present; mechanism benchmark skipped."
+          fi
+      - name: Router integration benchmark when local cases are available
+        run: |
+          if [[ -f research_technology/benchmarks/datasets/router_cases_v1/cases.json ]]; then
+            ./scripts/uv_run.sh python research_technology/benchmarks/runners/eval_router.py
+          else
+            echo "Local Router evaluation cases are not present; integration benchmark skipped."
+          fi
+      - name: Model Gateway offline mechanism benchmark
+        run: ./scripts/uv_run.sh python research_technology/benchmarks/runners/eval_model_gateway.py
+      - name: Task Runtime 1000-task benchmark
+        run: ./scripts/uv_run.sh python research_technology/benchmarks/runners/eval_task_runtime.py
+      - name: Redis/Dramatiq real worker recovery gate
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          compose_file=research_technology/reproducibility/docker/docker-compose.yml
+          trap 'docker compose -f "$compose_file" down' EXIT
+          docker compose -f "$compose_file" build backend worker-security
+          docker compose -f "$compose_file" up -d --wait redis backend worker-security
+          ./scripts/uv_run.sh python research_technology/benchmarks/runners/eval_distributed_recovery.py
+      - name: Generate local technical evidence
+        run: ./scripts/uv_run.sh python scripts/generate_technical_manifest.py
+      - name: Repository documentation links
+        run: ./scripts/uv_run.sh python scripts/check_markdown_links.py
+      - name: Review index and package boundaries
+        run: ./scripts/uv_run.sh python scripts/check_repository_index.py
+      - name: Generate technical SBOM and manifest
+        run: ./scripts/uv_run.sh python scripts/generate_technical_manifest.py --check
+      - name: Tests and minimum coverage
+        run: >-
+          ./scripts/uv_run.sh python -m pytest
+          --cov=backend.core
+          --cov=agent_demo.langgraph_agent
+          --cov=agent_demo.adapters.external_agent
+          --cov=integrations.reference_agent
+          --cov=mcp
+          --cov=safeagent_gov
+          --cov-report=term-missing
+          --cov-fail-under=85
+          -q
+      - name: AgentSecEval smoke benchmark
+        if: github.event_name != 'schedule'
+        run: |
+          if [[ -f research_technology/benchmarks/datasets/catalog.yaml ]]; then
+            ./scripts/uv_run.sh python research_technology/benchmarks/runners/run_all.py --profile smoke
+          else
+            echo "Private benchmark datasets are not present; smoke benchmark skipped."
+          fi
+      - name: AgentSecEval weekly full benchmark
+        if: github.event_name == 'schedule'
+        run: |
+          if [[ -f research_technology/benchmarks/datasets/catalog.yaml ]]; then
+            ./scripts/uv_run.sh python research_technology/benchmarks/runners/run_all.py --profile full
+          else
+            echo "Private benchmark datasets are not present; full benchmark skipped."
+          fi

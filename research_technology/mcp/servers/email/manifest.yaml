@@ -1,0 +1,7 @@
+name: email
+version: "1.0.0"
+simulation_only: true
+capabilities: [send_email]
+security:
+  network_access: false
+  real_delivery: false

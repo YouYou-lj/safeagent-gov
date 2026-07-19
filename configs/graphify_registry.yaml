@@ -1,0 +1,161 @@
+version: "1.0.0"
+active_policy_version: "2.0.0"
+
+# Security capabilities are forced into every retrieved execution path. Names
+# must match an existing top-level Skill manifest; the scanner fails closed on
+# stale references.
+mandatory_skills:
+  - promptshield-gov
+  - mcpguard-gov
+  - traceaudit-gov
+
+intents:
+  sensitive_external_send:
+    name: 敏感信息外发
+    keywords: [外部邮箱, 外部发送, 外发, 人员名单, 敏感信息, external@example.com]
+    semantic_examples: [将员工通讯录转交合作伙伴, 把个人资料传送到外部系统, 对外共享内部人员信息]
+    scenarios: [government_office, process_handling]
+    required_skills: [promptshield-gov, mcpguard-gov, sensitivedata-gov, compliance-gov, traceaudit-gov]
+    agents: [tool_risk_agent, compliance_agent, audit_agent]
+    models: [deterministic]
+    data_sources: [user_input, uploaded_document, rag_result, memory]
+    recommended_path:
+      - skill.promptshield_gov
+      - agent.tool_risk_agent
+      - skill.mcpguard_gov
+      - mcp.file_read
+      - skill.sensitivedata_gov
+      - skill.compliance_gov
+      - mcp.send_email
+      - skill.traceaudit_gov
+
+  skill_security_scan:
+    name: Skill 与 MCP 供应链扫描
+    keywords: [上传 Skill, 新 Skill, 新上传, 插件上线, 可以上线, MCP Server, 安全扫描, 供应链]
+    semantic_examples: [检查第三方扩展是否可以安装, 审查插件包中的恶意行为, 评估脚本依赖风险]
+    scenarios: [operations_coordination, government_office]
+    required_skills: [promptshield-gov, skillscan-gov, traceaudit-gov]
+    agents: [skill_scan_agent, audit_agent]
+    models: [deterministic]
+    data_sources: [user_input, uploaded_document]
+    recommended_path:
+      - skill.promptshield_gov
+      - agent.skill_scan_agent
+      - skill.skillscan_gov
+      - skill.traceaudit_gov
+
+  policy_summary:
+    name: 政务政策问答与摘要
+    keywords: [政策文件, 政策总结, 适用对象, 申报条件, 政策问答, 公开政策]
+    semantic_examples: [提炼法规材料要点, 归纳公开文件适用范围, 解答办事政策问题]
+    scenarios: [knowledge_service, government_office]
+    required_skills: [promptshield-gov, traceaudit-gov]
+    agents: [document_risk_agent, gov_rag_agent, audit_agent]
+    models: [deterministic]
+    data_sources: [user_input, web_content, uploaded_document, rag_result, memory]
+    recommended_path:
+      - skill.promptshield_gov
+      - agent.document_risk_agent
+      - agent.gov_rag_agent
+      - mcp.file_read
+      - skill.traceaudit_gov
+
+  operations_command:
+    name: 运维操作请求
+    keywords: [运维, Shell, 命令, 执行脚本, 数据库写入, 重启服务]
+    semantic_examples: [修改线上系统配置, 执行主机维护操作, 变更数据库或重启应用]
+    scenarios: [operations_collaboration]
+    required_skills: [promptshield-gov, mcpguard-gov, compliance-gov, traceaudit-gov]
+    agents: [tool_risk_agent, compliance_agent, audit_agent]
+    models: [deterministic]
+    data_sources: [user_input]
+    recommended_path:
+      - skill.promptshield_gov
+      - agent.tool_risk_agent
+      - skill.mcpguard_gov
+      - skill.compliance_gov
+      - mcp.shell_exec
+      - skill.traceaudit_gov
+
+  general_task:
+    name: 通用政企任务
+    keywords: []
+    semantic_examples: []
+    scenarios: []
+    required_skills: [promptshield-gov, traceaudit-gov]
+    agents: [audit_agent]
+    models: [deterministic]
+    data_sources: [user_input, web_content, uploaded_document, rag_result, memory]
+    recommended_path: [skill.promptshield_gov, skill.traceaudit_gov]
+
+agents:
+  tool_risk_agent:
+    name: ToolRiskAgent
+    skills: [mcpguard-gov]
+    tools: [file_read, file_write, file_delete, send_email, browser_visit, api_call, db_query, db_write, shell_exec]
+  compliance_agent:
+    name: ComplianceAgent
+    skills: [mcpguard-gov, sensitivedata-gov, compliance-gov]
+    tools: []
+  skill_scan_agent:
+    name: SkillScanAgent
+    skills: [skillscan-gov]
+    tools: [file_read]
+  document_risk_agent:
+    name: DocumentRiskAgent
+    skills: [promptshield-gov]
+    tools: [file_read]
+  gov_rag_agent:
+    name: GovRAGAgent
+    skills: [promptshield-gov]
+    tools: [file_read]
+  audit_agent:
+    name: AuditAgent
+    skills: [traceaudit-gov]
+    tools: []
+
+models:
+  deterministic:
+    name: Deterministic Offline Planner
+    provider: local
+    protocol: internal
+    network_access: false
+
+data_sources:
+  user_input:
+    name: 用户输入
+    summary: 当前会话中由签名用户提交的任务文本
+  web_content:
+    name: 网页内容
+    summary: 由受控适配器接收且默认不可信的网页正文
+  uploaded_document:
+    name: 上传文档
+    summary: PDF、Word、纯文本与 OCR 回退内容
+  rag_result:
+    name: RAG 检索结果
+    summary: 来自知识检索链路且需保留来源证据的文本
+  memory:
+    name: 历史记忆
+    summary: 跨轮次记忆与会话历史中的潜在污染内容
+
+test_cases:
+  graphify_001:
+    name: 敏感信息外发能力链
+    validates: [intent.sensitive_external_send, skill.mcpguard_gov, mcp.send_email]
+  graphify_002:
+    name: Skill 供应链扫描能力链
+    validates: [intent.skill_security_scan, skill.skillscan_gov, mcp.file_read]
+  graphify_003:
+    name: 政策摘要能力链
+    validates: [intent.policy_summary, skill.promptshield_gov, agent.gov_rag_agent]
+
+tool_risks:
+  file_read: data_access
+  file_write: data_modification
+  file_delete: destructive_action
+  send_email: data_exfiltration
+  browser_visit: network_access
+  api_call: network_access
+  db_query: database_access
+  db_write: database_modification
+  shell_exec: critical_execution

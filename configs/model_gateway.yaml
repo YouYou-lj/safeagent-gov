@@ -1,0 +1,320 @@
+version: "1.0.0"
+default_provider: deterministic
+max_concurrency: 32
+cache_ttl_seconds: 300
+max_cache_entries: 512
+server_max_cost_usd: 1.0
+
+# Provider profiles contain no secret values. credential_env names a runtime
+# environment variable; remote profiles remain disabled until an operator
+# deliberately supplies credentials and enables one profile.
+providers:
+  deterministic:
+    display_name: Deterministic Offline Baseline
+    protocol: internal
+    model: safeagent-deterministic-v1
+    endpoint: null
+    credential_env: null
+    enabled: true
+    network_access: false
+    private_deployment: true
+    capabilities: [chat, structured_output, long_context, tool_planning, code]
+    task_types: [general]
+    max_context_tokens: 131072
+    max_output_tokens: 32768
+    prompt_cost_per_million_usd: 0.0
+    completion_cost_per_million_usd: 0.0
+    priority: 1000
+    timeout_seconds: 1.0
+    max_attempts: 1
+    circuit_failure_threshold: 3
+    circuit_recovery_seconds: 5.0
+
+  openai-chat:
+    display_name: OpenAI Chat Completions
+    protocol: openai_chat_completions
+    model: configured-openai-chat-model
+    endpoint: https://api.openai.com/v1/chat/completions
+    credential_env: SAFEAGENT_OPENAI_API_KEY
+    enabled: false
+    network_access: true
+    private_deployment: false
+    capabilities: [chat, structured_output, long_context, tool_planning, code]
+    task_types: [general]
+    max_context_tokens: 128000
+    max_output_tokens: 16384
+    prompt_cost_per_million_usd: 1.0
+    completion_cost_per_million_usd: 4.0
+    priority: 20
+    timeout_seconds: 15.0
+    max_attempts: 2
+    circuit_failure_threshold: 3
+    circuit_recovery_seconds: 30.0
+
+  openai-responses:
+    display_name: OpenAI Responses API
+    protocol: openai_responses
+    model: configured-openai-responses-model
+    endpoint: https://api.openai.com/v1/responses
+    credential_env: SAFEAGENT_OPENAI_API_KEY
+    enabled: false
+    network_access: true
+    private_deployment: false
+    capabilities: [chat, structured_output, long_context, tool_planning, code]
+    task_types: [general]
+    max_context_tokens: 128000
+    max_output_tokens: 32768
+    prompt_cost_per_million_usd: 1.0
+    completion_cost_per_million_usd: 4.0
+    priority: 10
+    timeout_seconds: 15.0
+    max_attempts: 2
+    circuit_failure_threshold: 3
+    circuit_recovery_seconds: 30.0
+
+  anthropic:
+    display_name: Anthropic Messages API
+    protocol: anthropic_messages
+    model: configured-claude-model
+    endpoint: https://api.anthropic.com/v1/messages
+    credential_env: SAFEAGENT_ANTHROPIC_API_KEY
+    enabled: false
+    network_access: true
+    private_deployment: false
+    capabilities: [chat, structured_output, long_context, tool_planning, code]
+    task_types: [general]
+    max_context_tokens: 200000
+    max_output_tokens: 32768
+    prompt_cost_per_million_usd: 3.0
+    completion_cost_per_million_usd: 15.0
+    priority: 20
+    timeout_seconds: 20.0
+    max_attempts: 2
+    circuit_failure_threshold: 3
+    circuit_recovery_seconds: 30.0
+
+  gemini:
+    display_name: Gemini generateContent API
+    protocol: gemini_generate_content
+    model: configured-gemini-model
+    endpoint: https://generativelanguage.googleapis.com/v1beta/models/configured:generateContent
+    credential_env: SAFEAGENT_GEMINI_API_KEY
+    enabled: false
+    network_access: true
+    private_deployment: false
+    capabilities: [chat, structured_output, long_context, tool_planning, code]
+    task_types: [general]
+    max_context_tokens: 1000000
+    max_output_tokens: 65536
+    prompt_cost_per_million_usd: 1.0
+    completion_cost_per_million_usd: 4.0
+    priority: 30
+    timeout_seconds: 20.0
+    max_attempts: 2
+    circuit_failure_threshold: 3
+    circuit_recovery_seconds: 30.0
+
+  azure-openai:
+    display_name: Azure OpenAI Chat API
+    protocol: azure_openai
+    model: configured-azure-deployment
+    endpoint: https://configured.openai.azure.com/openai/deployments/configured/chat/completions?api-version=2024-10-21
+    credential_env: SAFEAGENT_AZURE_OPENAI_API_KEY
+    enabled: false
+    network_access: true
+    private_deployment: true
+    capabilities: [chat, structured_output, long_context, tool_planning, code]
+    task_types: [general]
+    max_context_tokens: 128000
+    max_output_tokens: 16384
+    prompt_cost_per_million_usd: 1.0
+    completion_cost_per_million_usd: 4.0
+    priority: 40
+    timeout_seconds: 20.0
+    max_attempts: 2
+    circuit_failure_threshold: 3
+    circuit_recovery_seconds: 30.0
+
+  aws-bedrock:
+    display_name: AWS Bedrock Runtime
+    protocol: aws_bedrock
+    model: configured-bedrock-model
+    endpoint: https://bedrock-runtime.us-east-1.amazonaws.com/model/configured/invoke
+    credential_env: SAFEAGENT_BEDROCK_BEARER_TOKEN
+    enabled: false
+    network_access: true
+    private_deployment: true
+    capabilities: [chat, structured_output, long_context, tool_planning]
+    task_types: [general]
+    max_context_tokens: 200000
+    max_output_tokens: 32768
+    prompt_cost_per_million_usd: 3.0
+    completion_cost_per_million_usd: 15.0
+    priority: 50
+    timeout_seconds: 20.0
+    max_attempts: 2
+    circuit_failure_threshold: 3
+    circuit_recovery_seconds: 30.0
+
+  vertex-ai:
+    display_name: Google Vertex AI generateContent
+    protocol: vertex_ai
+    model: configured-vertex-model
+    endpoint: https://us-central1-aiplatform.googleapis.com/v1/projects/configured/locations/us-central1/publishers/google/models/configured:generateContent
+    credential_env: SAFEAGENT_VERTEX_ACCESS_TOKEN
+    enabled: false
+    network_access: true
+    private_deployment: true
+    capabilities: [chat, structured_output, long_context, tool_planning, code]
+    task_types: [general]
+    max_context_tokens: 1000000
+    max_output_tokens: 65536
+    prompt_cost_per_million_usd: 1.0
+    completion_cost_per_million_usd: 4.0
+    priority: 50
+    timeout_seconds: 20.0
+    max_attempts: 2
+    circuit_failure_threshold: 3
+    circuit_recovery_seconds: 30.0
+
+  deepseek:
+    display_name: DeepSeek OpenAI-compatible API
+    protocol: openai_chat_completions
+    model: deepseek-chat
+    endpoint: https://api.deepseek.com/chat/completions
+    credential_env: SAFEAGENT_DEEPSEEK_API_KEY
+    enabled: false
+    network_access: true
+    private_deployment: false
+    capabilities: [chat, structured_output, long_context, code]
+    task_types: [general]
+    max_context_tokens: 128000
+    max_output_tokens: 8192
+    prompt_cost_per_million_usd: 1.0
+    completion_cost_per_million_usd: 4.0
+    priority: 60
+    timeout_seconds: 20.0
+    max_attempts: 2
+    circuit_failure_threshold: 3
+    circuit_recovery_seconds: 30.0
+
+  qwen:
+    display_name: Qwen OpenAI-compatible API
+    protocol: openai_chat_completions
+    model: configured-qwen-model
+    endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+    credential_env: SAFEAGENT_QWEN_API_KEY
+    enabled: false
+    network_access: true
+    private_deployment: false
+    capabilities: [chat, structured_output, long_context, tool_planning, code]
+    task_types: [general]
+    max_context_tokens: 128000
+    max_output_tokens: 16384
+    prompt_cost_per_million_usd: 1.0
+    completion_cost_per_million_usd: 4.0
+    priority: 60
+    timeout_seconds: 20.0
+    max_attempts: 2
+    circuit_failure_threshold: 3
+    circuit_recovery_seconds: 30.0
+
+  kimi:
+    display_name: Kimi OpenAI-compatible API
+    protocol: openai_chat_completions
+    model: configured-kimi-model
+    endpoint: https://api.moonshot.cn/v1/chat/completions
+    credential_env: SAFEAGENT_KIMI_API_KEY
+    enabled: false
+    network_access: true
+    private_deployment: false
+    capabilities: [chat, structured_output, long_context]
+    task_types: [general]
+    max_context_tokens: 128000
+    max_output_tokens: 16384
+    prompt_cost_per_million_usd: 1.0
+    completion_cost_per_million_usd: 4.0
+    priority: 70
+    timeout_seconds: 20.0
+    max_attempts: 2
+    circuit_failure_threshold: 3
+    circuit_recovery_seconds: 30.0
+
+  ollama:
+    display_name: Ollama Local API
+    protocol: ollama_chat
+    model: configured-local-model
+    endpoint: http://127.0.0.1:11434/api/chat
+    credential_env: null
+    enabled: false
+    network_access: true
+    private_deployment: true
+    capabilities: [chat, structured_output, long_context, code]
+    task_types: [general]
+    max_context_tokens: 32768
+    max_output_tokens: 8192
+    prompt_cost_per_million_usd: 0.0
+    completion_cost_per_million_usd: 0.0
+    priority: 5
+    timeout_seconds: 30.0
+    max_attempts: 2
+    circuit_failure_threshold: 3
+    circuit_recovery_seconds: 10.0
+
+  vllm:
+    display_name: vLLM OpenAI-compatible API
+    protocol: vllm_openai_compatible
+    model: configured-private-model
+    endpoint: http://127.0.0.1:8000/v1/chat/completions
+    credential_env: null
+    enabled: false
+    network_access: true
+    private_deployment: true
+    capabilities: [chat, structured_output, long_context, tool_planning, code]
+    task_types: [general]
+    max_context_tokens: 131072
+    max_output_tokens: 32768
+    prompt_cost_per_million_usd: 0.0
+    completion_cost_per_million_usd: 0.0
+    priority: 5
+    timeout_seconds: 30.0
+    max_attempts: 2
+    circuit_failure_threshold: 3
+    circuit_recovery_seconds: 10.0
+
+routing_rules:
+  general:
+    candidates: [openai-responses, anthropic, gemini, deterministic]
+    required_capabilities: [chat]
+    private_only: false
+    max_latency_ms: null
+  prompt_shield_review:
+    candidates: [vllm, ollama, openai-chat, qwen, deterministic]
+    required_capabilities: [structured_output]
+    private_only: false
+    max_latency_ms: 5000
+  document_summary:
+    candidates: [anthropic, gemini, openai-responses, deterministic]
+    required_capabilities: [long_context]
+    private_only: false
+    max_latency_ms: null
+  high_risk_decision:
+    candidates: [openai-responses, anthropic, azure-openai, deterministic]
+    required_capabilities: [structured_output]
+    private_only: false
+    max_latency_ms: null
+  tool_planning:
+    candidates: [openai-responses, anthropic, qwen, vllm, deterministic]
+    required_capabilities: [tool_planning]
+    private_only: false
+    max_latency_ms: null
+  skill_scan:
+    candidates: [vllm, openai-responses, qwen, deterministic]
+    required_capabilities: [code]
+    private_only: false
+    max_latency_ms: null
+  local_private_mode:
+    candidates: [vllm, ollama, deterministic]
+    required_capabilities: [chat]
+    private_only: true
+    max_latency_ms: null

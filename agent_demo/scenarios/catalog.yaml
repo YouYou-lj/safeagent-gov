@@ -1,0 +1,26 @@
+version: "1.0.0"
+scenarios:
+  - scenario_id: government_office
+    title: 政务办公
+    description: 会议纪要、公文摘要、文件读取与受控邮件协同。
+    allowed_user_roles: [staff, manager, reviewer]
+    default_data_labels: [internal]
+    expected_tools: [file_read, file_write, send_email]
+  - scenario_id: knowledge_service
+    title: 知识服务
+    description: 政策检索、网页/RAG/文档问答与来源可信度审查。
+    allowed_user_roles: [visitor, staff, auditor]
+    default_data_labels: [public]
+    expected_tools: [browser_visit, api_call]
+  - scenario_id: process_handling
+    title: 流程办理
+    description: 材料核验、只读查询、结果归档和人工审批恢复。
+    allowed_user_roles: [staff, manager, reviewer]
+    default_data_labels: [confidential]
+    expected_tools: [file_read, file_write, db_query, db_write]
+  - scenario_id: operations_collaboration
+    title: 运维协同
+    description: 运维知识查询、变更建议与高危命令强制阻断。
+    allowed_user_roles: [operator, manager, auditor]
+    default_data_labels: [internal]
+    expected_tools: [browser_visit, api_call, shell_exec]

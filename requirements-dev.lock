@@ -1,0 +1,30 @@
+async-timeout==5.0.1 ; python_full_version < '3.11.3'
+cfgv==3.5.0
+colorama==0.4.6 ; sys_platform == 'win32'
+coverage==7.15.2
+distlib==0.4.3
+fakeredis==2.36.1
+filelock==3.31.0
+identify==2.6.19
+iniconfig==2.3.0
+librt==0.13.0 ; platform_python_implementation != 'PyPy'
+mypy==1.20.2
+mypy-extensions==1.1.0
+nodeenv==1.10.0
+packaging==26.2
+pathspec==1.1.1
+platformdirs==4.10.1
+pluggy==1.6.0
+pre-commit==4.6.0
+pygments==2.20.0
+pytest==8.4.2
+pytest-cov==7.1.0
+python-discovery==1.4.4
+pyyaml==6.0.3
+redis==7.4.1
+ruff==0.15.22
+sortedcontainers==2.4.0
+tomli==2.4.1 ; python_full_version <= '3.11'
+types-pyyaml==6.0.12.20260518
+typing-extensions==4.16.0
+virtualenv==21.6.1

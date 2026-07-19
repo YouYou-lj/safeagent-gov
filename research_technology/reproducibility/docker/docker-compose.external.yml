@@ -1,0 +1,11 @@
+# Explicit opt-in egress for a backend configured with a remote LLM or Dify.
+# Keep the default compose network internal for offline/reproducible operation.
+services:
+  backend:
+    networks:
+      - safeagent_internal
+      - safeagent_egress
+
+networks:
+  safeagent_egress:
+    driver: bridge

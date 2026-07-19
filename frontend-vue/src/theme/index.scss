@@ -1,0 +1,119 @@
+:root {
+  --safe-color-accent: #087f6b;
+  --safe-color-accent-strong: #065f52;
+  --safe-color-accent-soft: #e7f4f1;
+  --safe-color-canvas: #f3f6f5;
+  --safe-color-surface: #ffffff;
+  --safe-color-surface-muted: #eef2f1;
+  --safe-color-text: #17211f;
+  --safe-color-text-secondary: #52605d;
+  --safe-color-text-inverse: #ffffff;
+  --safe-color-border: #d8e0de;
+  --safe-color-border-strong: #aebbb8;
+  --safe-color-danger: #b42318;
+  --safe-color-warning: #a15c07;
+  --safe-color-success: #087f6b;
+  --safe-color-code-background: #14201e;
+  --safe-color-code-text: #d8ede8;
+  --safe-shadow-surface: 0 12px 32px rgba(25, 58, 51, 0.08);
+  --safe-radius-card: 14px;
+  --safe-radius-control: 8px;
+  --safe-layout-sidebar: 248px;
+  --safe-layout-header: 68px;
+  --safe-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --el-color-primary: var(--safe-color-accent);
+  --el-color-primary-dark-2: var(--safe-color-accent-strong);
+  --el-border-radius-base: var(--safe-radius-control);
+  --el-border-color: var(--safe-color-border);
+  --el-text-color-primary: var(--safe-color-text);
+  --el-text-color-regular: var(--safe-color-text-secondary);
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  color: var(--safe-color-text);
+  background: var(--safe-color-canvas);
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100dvh;
+  background: var(--safe-color-canvas);
+}
+
+#app {
+  min-height: 100dvh;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.safe-page {
+  display: grid;
+  gap: 20px;
+}
+
+.safe-panel {
+  padding: 20px;
+  border: 1px solid var(--safe-color-border);
+  border-radius: var(--safe-radius-card);
+  background: var(--safe-color-surface);
+  box-shadow: var(--safe-shadow-surface);
+}
+
+.safe-panel__title {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.safe-panel__subtitle {
+  margin: -8px 0 16px;
+  color: var(--safe-color-text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.safe-grid--two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.safe-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.safe-mono {
+  font-family: var(--safe-font-mono);
+}
+
+.safe-empty {
+  padding: 36px 16px;
+  color: var(--safe-color-text-secondary);
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .safe-panel {
+    padding: 16px;
+  }
+
+  .safe-grid--two {
+    grid-template-columns: 1fr;
+  }
+}

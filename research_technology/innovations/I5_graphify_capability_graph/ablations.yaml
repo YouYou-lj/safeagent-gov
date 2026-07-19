@@ -1,0 +1,19 @@
+innovation: I5_graphify_capability_graph
+version: "1.0.0"
+ablations:
+  - id: B0_full_repository_context
+    graph_retrieval: false
+    mandatory_skill_completion: false
+    governance_health_gate: false
+  - id: B1_keyword_registry
+    graph_retrieval: false
+    mandatory_skill_completion: true
+    governance_health_gate: false
+  - id: B2_graph_without_mandatory_completion
+    graph_retrieval: true
+    mandatory_skill_completion: false
+    governance_health_gate: true
+  - id: B3_graphify_full
+    graph_retrieval: true
+    mandatory_skill_completion: true
+    governance_health_gate: true

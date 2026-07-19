@@ -1,0 +1,282 @@
+x-task-environment: &task-environment
+  SAFEAGENT_DB_PATH: /app/backend/data/safeagent.db
+  SAFEAGENT_GATEWAY_DB_PATH: /app/backend/data/safeagent.db
+  SAFEAGENT_REDIS_URL: redis://redis:6379/0
+  SAFEAGENT_TASK_RUNTIME_MODE: redis_dramatiq
+  SAFEAGENT_TASK_REDIS_NAMESPACE: safeagent:tasks:v1
+  SAFEAGENT_TASK_LEASE_SECONDS: "15"
+  SAFEAGENT_TASK_STAGING_TIMEOUT_SECONDS: "30"
+  SAFEAGENT_DRAMATIQ_NAMESPACE: safeagent-dramatiq-v1
+  SAFEAGENT_DRAMATIQ_HEARTBEAT_TIMEOUT_MS: "10000"
+  SAFEAGENT_DRAMATIQ_DEAD_MESSAGE_TTL_MS: "604800000"
+  SAFEAGENT_ENABLE_TASK_FAULT_INJECTION: ${SAFEAGENT_ENABLE_TASK_FAULT_INJECTION:-0}
+  SAFEAGENT_TASK_FAULT_DELAY_SECONDS: ${SAFEAGENT_TASK_FAULT_DELAY_SECONDS:-0}
+  SAFEAGENT_AUTH_SIGNING_SECRET: ${SAFEAGENT_AUTH_SIGNING_SECRET:-}
+  SAFEAGENT_AUDIT_SIGNING_SECRET: ${SAFEAGENT_AUDIT_SIGNING_SECRET:-}
+  SAFEAGENT_CAPABILITY_SECRET: ${SAFEAGENT_CAPABILITY_SECRET:-}
+
+x-task-worker: &task-worker
+  build:
+    context: ../../..
+    dockerfile: research_technology/reproducibility/docker/Dockerfile.backend
+    target: runtime
+  environment: *task-environment
+  volumes:
+    - audit_data:/app/backend/data
+    - agent_output:/app/agent_demo/data/output
+    - eval_results:/app/research_technology/evaluation/results
+  read_only: true
+  tmpfs:
+    - /tmp:size=64m,mode=1777
+  init: true
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+  pids_limit: 256
+  networks:
+    - safeagent_internal
+  depends_on:
+    redis:
+      condition: service_healthy
+  healthcheck:
+    test:
+      [
+        "CMD",
+        "python",
+        "-c",
+        "import os,redis; redis.Redis.from_url(os.environ['SAFEAGENT_REDIS_URL'], socket_timeout=2).ping()",
+      ]
+    interval: 10s
+    timeout: 3s
+    retries: 5
+    start_period: 10s
+  stop_grace_period: 30s
+
+services:
+  redis:
+    image: redis:8.2.3-alpine@sha256:08ad0b1d280850169a790dba1393ff7a90aef951fc19632cf4d3ce4f78e679ba
+    user: "999:1000"
+    command:
+      [
+        "redis-server",
+        "--appendonly",
+        "yes",
+        "--appendfsync",
+        "everysec",
+        "--aof-use-rdb-preamble",
+        "yes",
+        "--save",
+        "60",
+        "1000",
+        "--maxmemory-policy",
+        "noeviction",
+        "--protected-mode",
+        "no",
+      ]
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777,uid=999,gid=1000
+    init: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    mem_limit: 384m
+    cpus: 0.5
+    networks:
+      - safeagent_internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    stop_grace_period: 30s
+
+  backend:
+    build:
+      context: ../../..
+      dockerfile: research_technology/reproducibility/docker/Dockerfile.backend
+      target: runtime
+    expose:
+      - "8000"
+    environment:
+      <<: *task-environment
+      SAFEAGENT_CORS_ORIGINS: ${SAFEAGENT_CORS_ORIGINS:-http://localhost:8501,http://127.0.0.1:8501,http://localhost:5173,http://127.0.0.1:5173}
+      SAFEAGENT_TRUSTED_HOSTS: ${SAFEAGENT_TRUSTED_HOSTS:-localhost,127.0.0.1,backend}
+    volumes:
+      - audit_data:/app/backend/data
+      - agent_output:/app/agent_demo/data/output
+      - eval_results:/app/research_technology/evaluation/results
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    init: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: 768m
+    cpus: 1.0
+    networks:
+      - safeagent_internal
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  worker-security:
+    <<: *task-worker
+    command:
+      [
+        "dramatiq",
+        "safeagent_gov.task_runtime.dramatiq_workers",
+        "--processes",
+        "1",
+        "--threads",
+        "16",
+        "--queues",
+        "security",
+      ]
+    mem_limit: 768m
+    cpus: 1.0
+
+  worker-agent:
+    <<: *task-worker
+    command:
+      [
+        "dramatiq",
+        "safeagent_gov.task_runtime.dramatiq_workers",
+        "--processes",
+        "1",
+        "--threads",
+        "8",
+        "--queues",
+        "agent",
+      ]
+    mem_limit: 1g
+    cpus: 1.5
+
+  worker-evaluation:
+    <<: *task-worker
+    command:
+      [
+        "dramatiq",
+        "safeagent_gov.task_runtime.dramatiq_workers",
+        "--processes",
+        "1",
+        "--threads",
+        "1",
+        "--queues",
+        "evaluation",
+      ]
+    mem_limit: 1g
+    cpus: 2.0
+
+  frontend:
+    build:
+      context: ../../..
+      dockerfile: research_technology/reproducibility/docker/Dockerfile.frontend-vue
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777,uid=101,gid=101
+    init: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: 256m
+    cpus: 0.5
+    networks:
+      - safeagent_internal
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--output-document=-", "http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  ingress:
+    image: nginx:1.28.1-alpine@sha256:52e3ada4d978443601f286cc2f9e7b95c82aa3ad5a78ce9c6b94ce00258e68cc
+    entrypoint: ["nginx"]
+    command: ["-g", "daemon off;", "-c", "/etc/nginx/safeagent.conf"]
+    user: "101:101"
+    ports:
+      - "127.0.0.1:8501:8080"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/safeagent.conf:ro
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx:size=16m,mode=0755,uid=101,gid=101
+      - /var/run:size=4m,mode=0755,uid=101,gid=101
+      - /tmp:size=16m,mode=1777
+    init: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    mem_limit: 128m
+    cpus: 0.25
+    networks:
+      - safeagent_internal
+      - safeagent_edge
+    depends_on:
+      frontend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--output-document=-", "http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  verification:
+    profiles: ["verification"]
+    build:
+      context: ../../..
+      dockerfile: research_technology/reproducibility/docker/Dockerfile.backend
+      target: verification
+    command: ["python", "research_technology/reproducibility/scripts/container_verify.py", "--profile", "smoke"]
+    environment:
+      SAFEAGENT_DB_PATH: /tmp/safeagent-verification.db
+      SAFEAGENT_AUTH_SIGNING_KEY_PATH: /tmp/.auth_signing_key
+      SAFEAGENT_CAPABILITY_SIGNING_KEY_PATH: /tmp/.capability_signing_key
+    init: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: 1g
+    cpus: 2.0
+    networks:
+      - safeagent_internal
+
+volumes:
+  redis_data:
+  audit_data:
+  agent_output:
+  eval_results:
+
+networks:
+  safeagent_internal:
+    internal: true
+  safeagent_edge:
+    driver: bridge

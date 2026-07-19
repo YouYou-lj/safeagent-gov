@@ -1,0 +1,18 @@
+name: traceaudit-gov
+version: "1.2.0"
+category: security
+execution_mode: mandatory
+trigger_stages: [task_completed, task_blocked, approval]
+entrypoint: src/audit.py:get_audit_trace
+inputs: [trace_id]
+required_inputs: [trace_id]
+outputs: [trace_id, schema_version, events, integrity, retention_until, audit_status]
+required_outputs: [trace_id, schema_version, events, integrity, retention_until, audit_status]
+timeout_seconds: 3
+retries: 1
+failure_policy: block
+enabled: true
+permissions:
+  network_access: false
+  database_access: audit_sqlite_only
+  shell_exec: false

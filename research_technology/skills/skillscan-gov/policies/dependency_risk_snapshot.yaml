@@ -1,0 +1,31 @@
+version: "2026.07.1-demo"
+generated_at: "2026-07-18"
+scope: offline reproducible prototype snapshot
+vulnerabilities:
+  - ecosystem: pypi
+    package: pyyaml
+    affected: "<5.4"
+    ids: [CVE-2020-14343]
+    severity: high
+  - ecosystem: pypi
+    package: urllib3
+    affected: "<1.26.5"
+    ids: [CVE-2021-33503]
+    severity: medium
+malicious_packages:
+  pypi: [colourama, python3-dateutil]
+  npm: [crossenv, mongose]
+typosquats:
+  pypi:
+    reqeusts: requests
+    requestss: requests
+    urllib3s: urllib3
+    colourama: colorama
+    python3-dateutil: python-dateutil
+  npm:
+    crossenv: cross-env
+    mongose: mongoose
+    lodahs: lodash
+known_high_capability:
+  pypi: [pycrypto, python-nmap]
+  npm: [shelljs]

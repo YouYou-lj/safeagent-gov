@@ -1,0 +1,7 @@
+name: shell
+version: "1.0.0"
+simulation_only: true
+capabilities: [shell_exec]
+security:
+  process_execution: false
+  default_decision: block

@@ -1,0 +1,8 @@
+name: file
+version: "1.0.0"
+simulation_only: true
+capabilities: [file_read, file_write, file_delete]
+data_root: /data
+security:
+  file_delete_executes: false
+  write_scope: /data/output

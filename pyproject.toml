@@ -1,0 +1,94 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "safeagent-gov"
+version = "0.2.0"
+description = "面向政企场景的大模型智能体安全治理与评测原型"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+license = { file = "LICENSE" }
+dependencies = [
+    "dramatiq[redis]==2.2.0",
+    "fastapi==0.139.2",
+    "langgraph==0.6.11",
+    "networkx==3.6.1",
+    "pydantic==2.13.4",
+    "pypdf==5.9.0",
+    "python-docx==1.2.0",
+    "python-multipart==0.0.32",
+    "pyyaml==6.0.3",
+    "requests==2.34.2",
+    "redis==7.4.1",
+    "uvicorn[standard]==0.51.0",
+]
+
+[dependency-groups]
+dev = [
+    "fakeredis==2.36.1",
+    "mypy==1.20.2",
+    "pyinstaller==6.21.0",
+    "pre-commit==4.6.0",
+    "pytest==8.4.2",
+    "pytest-cov==7.1.0",
+    "ruff==0.15.22",
+    "types-pyyaml==6.0.12.20260518",
+]
+
+[tool.setuptools.packages.find]
+include = ["agent_demo*", "backend*", "benchmarks*", "eval*", "integrations*", "mcp*", "research_technology*", "safeagent_gov*", "skills*"]
+exclude = ["tests*"]
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests", "research_technology/mcp/tests", "research_technology/skills", "tests"]
+python_files = ["test_*.py"]
+addopts = "-ra --strict-config --strict-markers"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+extend-exclude = [
+    ".uv-cache",
+    ".uv-python",
+    ".venv",
+    "agent_demo/data",
+    "research_technology/datasets",
+    "research_technology/evidence/reports",
+]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "UP"]
+ignore = [
+    # Existing timezone and string-enum APIs remain stable public contracts.
+    "UP017",
+    "UP042",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Script entry points bootstrap the repository root before importing packages.
+"research_technology/benchmarks/runners/*.py" = ["E402"]
+"research_technology/evaluation/*.py" = ["E402"]
+# FastAPI intentionally declares Depends/File factories in endpoint defaults.
+"backend/api/*.py" = ["B008"]
+"backend/auth.py" = ["B008"]
+
+[tool.mypy]
+python_version = "3.11"
+check_untyped_defs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+follow_imports = "skip"
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[tool.coverage.run]
+branch = true
+source = ["agent_demo.adapters.external_agent", "agent_demo.langgraph_agent", "backend.core", "integrations.reference_agent", "mcp", "safeagent_gov"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 85

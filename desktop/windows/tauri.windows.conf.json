@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "bundle": {
+    "targets": ["msi", "nsis"],
+    "icon": [
+      "../windows/icons/StoreLogo.png",
+      "../windows/icons/Square30x30Logo.png",
+      "../windows/icons/Square44x44Logo.png",
+      "../windows/icons/Square71x71Logo.png",
+      "../windows/icons/Square89x89Logo.png",
+      "../windows/icons/Square107x107Logo.png",
+      "../windows/icons/Square142x142Logo.png",
+      "../windows/icons/Square150x150Logo.png",
+      "../windows/icons/Square284x284Logo.png",
+      "../windows/icons/Square310x310Logo.png",
+      "../windows/icons/icon.ico"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "offlineInstaller",
+        "silent": true
+      },
+      "nsis": {
+        "installMode": "currentUser"
+      }
+    }
+  }
+}

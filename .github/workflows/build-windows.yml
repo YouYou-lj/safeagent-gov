@@ -1,0 +1,70 @@
+name: build-windows
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "desktop/**"
+      - "frontend-vue/**"
+      - "backend/**"
+      - "safeagent_gov/**"
+      - "agent_demo/**"
+      - "configs/**"
+      - "integrations/**"
+      - "scripts/**"
+      - "skills/**"
+      - "mcp/**"
+      - "benchmarks/**"
+      - "eval/**"
+      - "research_technology/skills/**"
+      - "research_technology/mcp/**"
+      - "research_technology/evaluation/**"
+      - "research_technology/benchmarks/**"
+      - "pyproject.toml"
+      - "requirements*.txt"
+      - "requirements*.lock"
+      - "uv.lock"
+      - ".python-version"
+      - ".uv-version"
+      - ".github/workflows/build-windows.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2025
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.7.0"
+          enable-cache: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24.3.0"
+          cache: npm
+          cache-dependency-path: |
+            frontend-vue/package-lock.json
+            desktop/package-lock.json
+      - name: Build isolated Python environment
+        shell: pwsh
+        run: ./scripts/setup_uv_env.ps1
+      - name: Install locked frontend and desktop dependencies
+        shell: pwsh
+        run: |
+          npm ci --prefix frontend-vue --ignore-scripts --no-audit --no-fund
+          npm ci --prefix desktop --ignore-scripts --no-audit --no-fund
+      - name: Build native Windows packages
+        shell: pwsh
+        run: ./desktop/windows/build-windows.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: safeagent-gov-windows
+          path: |
+            release/windows/*.msi
+            release/windows/*setup*.exe
+          if-no-files-found: error

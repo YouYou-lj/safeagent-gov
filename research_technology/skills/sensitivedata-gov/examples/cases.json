@@ -1,0 +1,4 @@
+[
+  {"content": "联系人 13800138000", "destination": "external@example.com", "expected": "mask_and_allow"},
+  {"content": "API_KEY=abcd1234", "destination": "external@example.com", "expected": "block"}
+]

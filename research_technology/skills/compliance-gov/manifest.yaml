@@ -1,0 +1,21 @@
+name: compliance-gov
+version: "1.0.0"
+category: security
+execution_mode: mandatory
+trigger_stages: [before_external_send, before_data_export, before_process_action]
+entrypoint: src/checker.py:evaluate_compliance
+inputs: [operation, scenario, destination, data_labels, approval_state, actor_role]
+required_inputs: [operation, scenario]
+outputs: [decision, risk_level, reason, policy_hits, obligations, policy_version]
+required_outputs: [decision, risk_level, reason, policy_hits, obligations, policy_version]
+timeout_seconds: 3
+retries: 1
+failure_policy: block
+enabled: true
+policies:
+  rules: policies/compliance_rules.yaml
+permissions:
+  network_access: false
+  file_read: policy_only
+  file_write: false
+  shell_exec: false

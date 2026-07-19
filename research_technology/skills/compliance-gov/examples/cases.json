@@ -1,0 +1,4 @@
+[
+  {"operation": "send_email", "scenario": "government_office", "data_labels": ["internal"], "expected": "require_approval"},
+  {"operation": "shell_exec", "scenario": "operations_collaboration", "expected": "block"}
+]

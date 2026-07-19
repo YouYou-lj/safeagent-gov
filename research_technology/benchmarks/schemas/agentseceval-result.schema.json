@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://safeagent-gov.local/schemas/agentseceval-result-v1.json",
+  "title": "AgentSecEval-Gov unified result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "profile",
+    "generated_at",
+    "random_seed",
+    "environment",
+    "versions",
+    "datasets",
+    "dimensions",
+    "baselines",
+    "gates",
+    "runner_outputs",
+    "case_results",
+    "failures"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "run_id": {"type": "string", "minLength": 8},
+    "profile": {"enum": ["smoke", "full"]},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "random_seed": {"type": "integer"},
+    "environment": {"type": "object"},
+    "versions": {"type": "object"},
+    "datasets": {"type": "array", "minItems": 4},
+    "dimensions": {
+      "type": "object",
+      "required": ["content_safety", "data_safety", "execution_safety", "supply_chain", "compliance"]
+    },
+    "baselines": {"type": "object"},
+    "gates": {
+      "type": "object",
+      "required": ["all_passed", "checks"]
+    },
+    "runner_outputs": {"type": "array"},
+    "case_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "dataset", "case_id", "dimension", "baseline", "family",
+          "expected", "observed", "passed", "decision", "latency_ms", "error_type"
+        ]
+      }
+    },
+    "failures": {"type": "array"}
+  },
+  "additionalProperties": false
+}

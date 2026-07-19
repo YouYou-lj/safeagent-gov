@@ -1,0 +1,12 @@
+version: "1.0.0"
+external_actions: [send_email, api_call, external_send]
+export_actions: [file_write, export_file, db_query, data_export]
+critical_block_actions: [shell_exec, file_delete]
+approval_actions: [db_write, process_submit]
+restricted_labels: [internal, personal, restricted, secret, sensitive]
+restricted_requester_roles: [visitor]
+approved_states: [approved]
+obligations:
+  external_sensitive: [human_approval, purpose_binding, immutable_audit]
+  data_export: [least_data, destination_check, immutable_audit]
+  process_action: [role_check, policy_version_record, immutable_audit]

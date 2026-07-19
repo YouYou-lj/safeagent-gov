@@ -1,0 +1,19 @@
+name: skillscan-gov
+version: "1.2.0"
+category: security
+execution_mode: mandatory
+trigger_stages: [before_skill_register, before_mcp_register]
+entrypoint: src/scanner.py:scan_skill_package
+inputs: [package_path]
+required_inputs: [package_path]
+outputs: [skill_name, risk_score, risk_level, evidence, behavior_graph, permission_analysis, sbom, recommendation]
+required_outputs: [skill_name, risk_score, risk_level, evidence, behavior_graph, permission_analysis, sbom, recommendation]
+timeout_seconds: 10
+retries: 1
+failure_policy: block
+enabled: true
+permissions:
+  network_access: false
+  file_read: uploaded_package_only
+  file_write: temporary_extraction_only
+  shell_exec: false

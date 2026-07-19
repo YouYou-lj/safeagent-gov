@@ -1,0 +1,51 @@
+version: "2.1.0"
+tools:
+  file_read:
+    risk_level: medium
+    allow_paths: ["/data/public", "/data/approved"]
+    deny_paths: ["/data/secret", "/system", "/private", "/etc", "~/.ssh"]
+    action: allow_with_log
+  file_write:
+    risk_level: medium
+    allow_paths: ["/data/output"]
+    action: allow_with_log
+  file_delete:
+    risk_level: critical
+    action: block
+  send_email:
+    risk_level: high
+    external_domain_action: require_approval
+    internal_domain_whitelist: ["gov.cn", "xiongan.gov.cn"]
+    action: require_approval
+  browser_visit:
+    risk_level: medium
+    domain_whitelist: ["gov.cn", "xiongan.gov.cn"]
+    block_private_ip: true
+    action: allow_with_check
+  api_call:
+    risk_level: high
+    domain_whitelist: ["gov.cn", "xiongan.gov.cn"]
+    block_private_ip: true
+    action: require_approval
+  shell_exec:
+    risk_level: critical
+    action: block
+  db_query:
+    risk_level: medium
+    forbidden_patterns: ["drop ", "delete ", "update ", "insert ", "attach ", "pragma "]
+    action: allow_with_log
+  db_write:
+    risk_level: critical
+    action: require_approval
+role_overrides:
+  staff:
+    blocked_tools: ["db_write"]
+  visitor:
+    blocked_tools: ["file_write", "db_query", "db_write"]
+  auditor:
+    blocked_tools: ["file_write", "file_delete", "send_email", "shell_exec", "db_write"]
+agent_role_overrides:
+  untrusted:
+    blocked_tools: ["file_read", "file_write", "file_delete", "send_email", "browser_visit", "api_call", "shell_exec", "db_query", "db_write"]
+  readonly:
+    blocked_tools: ["file_write", "file_delete", "send_email", "api_call", "shell_exec", "db_write"]

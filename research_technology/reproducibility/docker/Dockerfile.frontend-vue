@@ -1,0 +1,18 @@
+FROM node:24.3.0-alpine@sha256:b8ea75e6dcdf7dbba1ea8b57f77ec89ef04c1719d2ae986c8fbea21f9f4ec187 AS build
+
+ENV NODE_ENV=development
+WORKDIR /app
+COPY frontend-vue/package.json frontend-vue/package-lock.json ./
+RUN npm ci --ignore-scripts --no-audit --no-fund
+COPY frontend-vue/ ./
+RUN npm run build
+
+FROM nginx:1.28.1-alpine@sha256:52e3ada4d978443601f286cc2f9e7b95c82aa3ad5a78ce9c6b94ce00258e68cc
+
+COPY research_technology/reproducibility/docker/deploy/vue-nginx.conf /etc/nginx/vue.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+
+USER 101:101
+EXPOSE 8080
+ENTRYPOINT ["nginx"]
+CMD ["-g", "daemon off;", "-c", "/etc/nginx/vue.conf"]

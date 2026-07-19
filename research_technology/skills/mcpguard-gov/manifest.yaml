@@ -1,0 +1,19 @@
+name: mcpguard-gov
+version: "1.2.0"
+category: security
+execution_mode: mandatory
+trigger_stages: [before_tool_call]
+entrypoint: src/guard.py:check_tool_call
+inputs: [tool_name, tool_args, context]
+required_inputs: [tool_name, tool_args, context]
+outputs: [decision, risk_level, reason, policy_hit, policy_version, approval_id, output_data_labels]
+required_outputs: [decision, risk_level, reason, policy_hit, policy_version]
+timeout_seconds: 3
+retries: 2
+failure_policy: block
+enabled: true
+permissions:
+  network_access: false
+  file_read: policy_and_virtual_data
+  file_write: virtual_output_only
+  shell_exec: false

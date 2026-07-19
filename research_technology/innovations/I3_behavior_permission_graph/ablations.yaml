@@ -1,0 +1,17 @@
+innovation: I3_behavior_permission_graph
+version: "0.1.0"
+defaults:
+  ast_analysis: true
+  call_graph: true
+  data_flow: true
+  permission_consistency: true
+  dependency_intelligence: true
+ablations:
+  - id: keyword_only
+    disable: [ast_analysis, call_graph, data_flow, permission_consistency, dependency_intelligence]
+  - id: no_data_flow
+    disable: [data_flow]
+  - id: no_permission_graph
+    disable: [permission_consistency]
+  - id: no_dependency_intel
+    disable: [dependency_intelligence]

@@ -1,0 +1,29 @@
+name: safeagent-gov-core-view
+version: 1.0.0
+mode: authoritative-path-map
+copy_policy: forbidden
+capabilities:
+  skills:
+    paths: [research_technology/skills, safeagent_gov/skill_runtime]
+    review_entry: research_technology/skills/README.md
+  mcp:
+    paths: [research_technology/mcp]
+    review_entry: research_technology/mcp/README.md
+  agents:
+    paths: [agent_demo, safeagent_gov/router]
+    review_entry: research_technology/paper_sources/docs/safe_router.md
+  graphify:
+    paths: [safeagent_gov/graphify]
+    review_entry: research_technology/paper_sources/docs/graphify.md
+  eval:
+    paths: [research_technology/benchmarks, research_technology/evaluation]
+    review_entry: research_technology/benchmarks/README.md
+  audit:
+    paths: [research_technology/skills/traceaudit-gov, safeagent_gov/audit.py]
+    review_entry: research_technology/innovations/I4_verifiable_trace/README.md
+  model_gateway:
+    paths: [safeagent_gov/model_gateway]
+    review_entry: research_technology/paper_sources/docs/model_gateway.md
+  configs:
+    paths: [configs]
+    review_entry: PROJECT_MAP.md
