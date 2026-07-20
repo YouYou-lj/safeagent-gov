@@ -17,9 +17,9 @@ _执行日期：2026-07-20；起始基线：`main@f1d097d`_
 | 工作项 | 实现 | 本地证据 | 状态 |
 | --- | --- | --- | --- |
 | macOS sidecar 生命周期 | 监视 Tauri 父 PID、可配置回收时限、zombie 判定、PID/PPID/状态诊断 | App、DMG、sidecar 启停和 1.3 秒回收通过 | 已完成 |
-| macOS 双架构 CI | `macos-14` 构建 `aarch64`，`macos-15-intel` 构建 `x86_64` | 工作流静态测试通过 | 待云端验收 |
+| macOS 双架构 CI | `macos-14` 构建 `aarch64`，`macos-15-intel` 构建 `x86_64` | 两架构 App、DMG、启动、回收与产物上传通过 | 已完成 |
 | macOS 正式发布链 | 独立受保护工作流导入证书与 API Key，执行签名、公证、Stapling 和 Gatekeeper 检查 | 脚本语法和秘密边界测试通过 | 待 Apple 凭据验收 |
-| Actions 升级 | checkout v6、setup-node v6、setup-uv v8.3.2、artifact v7/v8 | 工作流 YAML 和平台边界测试通过 | 待云端验收 |
+| Actions 升级 | checkout v6、setup-node v6、setup-uv v8.3.2、artifact v7/v8 | 技术质量和三平台云端工作流通过 | 已完成 |
 | 定时恢复门禁 | 内部 compose 调用显式指定配置，探针使用可导入模块路径 | Worker 强杀恢复、审计完整性和 AOF 持久化通过 | 已完成 |
 | 数据集边界 | 真实样本和结果目录保持忽略 | `git ls-files` 无数据集文件 | 已完成 |
 
@@ -70,11 +70,12 @@ _执行日期：2026-07-20；起始基线：`main@f1d097d`_
 - Redis/Dramatiq：真实 Worker `SIGKILL` 后恢复成功，`delivery_count=2`、`recovered_count=1`、审计完整、AOF 重启后状态保留、危险动作执行数为 0。
 - 前端：lint、typecheck 和 Vitest 通过。
 - 工程质量：Ruff、Mypy、Markdown 链接、仓库索引、平台边界和技术清单检查通过。
+- GitHub：`technical-quality` 的 push、PR 与手动 Docker 门禁均通过；Linux、Windows、Apple Silicon 和 Intel 构建均通过。
 
 ## 🚦剩余验收
 
-- [ ] GitHub `technical-quality`、`build-macos`、`build-linux`、`build-windows` 在本次提交上全部通过。
-- [ ] Apple Silicon 与 Intel 云端产物分别完成构建、启动和 sidecar 回收验证。
+- [x] GitHub `technical-quality`、`build-macos`、`build-linux`、`build-windows` 在本次代码提交上全部通过。
+- [x] Apple Silicon 与 Intel 云端产物分别完成构建、启动和 sidecar 回收验证。
 - [ ] 配置真实 Apple Secrets 后完成一次正式签名与公证演练。
 - [x] 应用退出后 sidecar 在规定窗口内结束，失败时输出完整诊断。
 - [x] `git ls-files research_technology/benchmarks/datasets` 输出为空。
