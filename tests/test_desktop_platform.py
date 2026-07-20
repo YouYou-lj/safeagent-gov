@@ -111,7 +111,7 @@ def test_platform_directories_contain_only_native_build_assets() -> None:
         platform_root = desktop / platform_name
         assert forbidden_shared_roots.isdisjoint(path.name for path in platform_root.iterdir())
         for path in platform_root.rglob("*"):
-            if path.is_file():
+            if path.is_file() and "__pycache__" not in path.parts:
                 assert path.suffix.lower() in allowed_suffixes, path.relative_to(ROOT)
 
 
@@ -152,6 +152,43 @@ def test_git_and_ci_cover_shared_cross_platform_sources() -> None:
             encoding="utf-8"
         )
         assert all(trigger in workflow for trigger in shared_triggers), platform_name
+
+
+def test_macos_ci_builds_native_architectures_and_release_requires_apple_credentials() -> None:
+    workflows = ROOT / ".github" / "workflows"
+    build_workflow = (workflows / "build-macos.yml").read_text(encoding="utf-8")
+    assert "runner: macos-14" in build_workflow
+    assert "runner: macos-15-intel" in build_workflow
+    assert "safeagent-gov-macos-${{ matrix.arch }}" in build_workflow
+
+    release_workflow = (workflows / "release-macos.yml").read_text(encoding="utf-8")
+    for secret in (
+        "APPLE_CERTIFICATE",
+        "APPLE_CERTIFICATE_PASSWORD",
+        "APPLE_SIGNING_IDENTITY",
+        "APPLE_API_ISSUER",
+        "APPLE_API_KEY",
+        "APPLE_API_PRIVATE_KEY",
+        "KEYCHAIN_PASSWORD",
+    ):
+        assert secret in release_workflow
+    assert "environment: macos-release" in release_workflow
+    assert "desktop/mac/build-release.sh" in release_workflow
+
+    release_script = (ROOT / "desktop" / "mac" / "build-release.sh").read_text(encoding="utf-8")
+    assert "--no-sign" not in release_script
+    assert "adhoc_sign_app.py" not in release_script
+    assert "stapler validate" in release_script
+
+
+def test_github_actions_use_node24_compatible_action_versions() -> None:
+    workflows = ROOT / ".github" / "workflows"
+    workflow_text = "\n".join(path.read_text(encoding="utf-8") for path in workflows.glob("*.yml"))
+    assert "actions/checkout@v4" not in workflow_text
+    assert "actions/setup-node@v4" not in workflow_text
+    assert "astral-sh/setup-uv@v6" not in workflow_text
+    assert "actions/upload-artifact@v4" not in workflow_text
+    assert "actions/download-artifact@v4" not in workflow_text
 
 
 @pytest.mark.parametrize(

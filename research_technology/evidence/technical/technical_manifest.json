@@ -70,7 +70,7 @@
     },
     {
       "path": "research_technology/benchmarks/results/distributed_recovery_v1.json",
-      "sha256": "49f7234239fe809416ce7ecb7d6c9fc4fa96b1dfef1ae73492a22391db5ad8df"
+      "sha256": "5046481f998a7bfadf4460fe8d225d9660038e8e4d5733aabef18ec71a11a591"
     },
     {
       "path": "research_technology/benchmarks/results/engineering_resilience_v1.json",
@@ -94,7 +94,7 @@
     },
     {
       "path": "research_technology/benchmarks/results/model_gateway_eval_v1.json",
-      "sha256": "f13d7c3727e0c2252ef34dee830861502fb370759a1018ff807ab7ce639868dc"
+      "sha256": "343706d7048e89df12863e3f1353276c32bbaa884328b73f9951317668fb7472"
     },
     {
       "path": "research_technology/benchmarks/results/promptshield_holdout_v1.json",
@@ -114,7 +114,7 @@
     },
     {
       "path": "research_technology/benchmarks/results/task_runtime_1000_v1.json",
-      "sha256": "da9fe1bbddaa18b5b41a0d7d739e43c13d86fa588817bcbc91e647d04b5e7a19"
+      "sha256": "cfc39202dabf9b4019e8c4341c7617710ff712acb1f08a202b10511e16a9292a"
     },
     {
       "path": "research_technology/benchmarks/results/traceaudit_holdout_v1.json",
@@ -313,8 +313,8 @@
     "node_target": "24.3.0",
     "python_target": "3.11.12",
     "rust_target": "1.97.1 (native macOS/Windows/Linux target)",
-    "source_file_count": 364,
-    "source_tree_sha256": "300a8aeaa8457c1457322056b7d1e52966da39f583fe551bc19773b55f2e8824",
+    "source_file_count": 368,
+    "source_tree_sha256": "1117c7d45e64fb7e5411fa3256de6bebb68dfb381bfecd1237520cfbd83598b3",
     "uv_target": "0.7.0"
   },
   "schema_version": "1.0.0"
