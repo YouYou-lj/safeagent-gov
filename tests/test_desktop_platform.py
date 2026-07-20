@@ -187,6 +187,8 @@ def test_github_actions_use_node24_compatible_action_versions() -> None:
     assert "actions/checkout@v4" not in workflow_text
     assert "actions/setup-node@v4" not in workflow_text
     assert "astral-sh/setup-uv@v6" not in workflow_text
+    assert "astral-sh/setup-uv@v8\n" not in workflow_text
+    assert workflow_text.count("astral-sh/setup-uv@v8.3.2") == 5
     assert "actions/upload-artifact@v4" not in workflow_text
     assert "actions/download-artifact@v4" not in workflow_text
 
