@@ -41,8 +41,9 @@ include = ["agent_demo*", "backend*", "benchmarks*", "eval*", "integrations*", "
 exclude = ["tests*"]
 
 [tool.pytest.ini_options]
-testpaths = ["backend/tests", "research_technology/mcp/tests", "research_technology/skills", "tests"]
+testpaths = ["backend/tests", "desktop/mac/tests", "research_technology/mcp/tests", "research_technology/skills", "tests"]
 python_files = ["test_*.py"]
+pythonpath = ["."]
 addopts = "-ra --strict-config --strict-markers"
 
 [tool.ruff]

@@ -10,7 +10,8 @@ permissions:
 
 jobs:
   macos:
-    uses: ./.github/workflows/build-macos.yml
+    uses: ./.github/workflows/release-macos.yml
+    secrets: inherit
   windows:
     uses: ./.github/workflows/build-windows.yml
   linux:
@@ -20,7 +21,7 @@ jobs:
     needs: [macos, windows, linux]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: artifacts
       - name: Create draft GitHub Release from native artifacts

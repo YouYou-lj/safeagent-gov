@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import time
 from pathlib import Path
+
+RECLAIM_TIMEOUT_ENV = "SAFEAGENT_MAC_RECLAIM_TIMEOUT_SECONDS"
 
 
 def _child_pids(parent_pid: int) -> list[int]:
@@ -17,12 +20,56 @@ def _child_pids(parent_pid: int) -> list[int]:
     return [int(value) for value in result.stdout.split() if value.isdigit()]
 
 
-def _running(pid: int) -> bool:
-    return subprocess.run(
-        ["/bin/ps", "-p", str(pid)],
+def _process_state(pid: int) -> str | None:
+    result = subprocess.run(
+        ["/bin/ps", "-o", "stat=", "-p", str(pid)],
         check=False,
         capture_output=True,
-    ).returncode == 0
+        text=True,
+    )
+    if result.returncode != 0:
+        return None
+    state = result.stdout.strip()
+    return state.split()[0] if state else None
+
+
+def _running(pid: int) -> bool:
+    state = _process_state(pid)
+    return state is not None and not state.startswith("Z")
+
+
+def _process_details(pid: int) -> str:
+    result = subprocess.run(
+        ["/bin/ps", "-o", "pid=,ppid=,stat=,etime=,command=", "-p", str(pid)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    details = result.stdout.strip()
+    return details or f"pid={pid} state=not-found"
+
+
+def _positive_timeout(name: str, default: float) -> float:
+    raw_value = os.environ.get(name)
+    if raw_value is None:
+        return default
+    try:
+        timeout = float(raw_value)
+    except ValueError as exc:
+        raise RuntimeError(f"{name} must be a number, got {raw_value!r}") from exc
+    if timeout <= 0:
+        raise RuntimeError(f"{name} must be greater than zero, got {raw_value!r}")
+    return timeout
+
+
+def _wait_for_reclamation(pids: list[int], timeout: float) -> list[int]:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        survivors = [pid for pid in pids if _running(pid)]
+        if not survivors:
+            return []
+        time.sleep(0.2)
+    return [pid for pid in pids if _running(pid)]
 
 
 def main() -> None:
@@ -43,6 +90,7 @@ def main() -> None:
         raise SystemExit("Built app is missing; run bash mac/build-mac.sh first")
     process = subprocess.Popen([str(executable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     children: list[int] = []
+    reclaim_timeout = _positive_timeout(RECLAIM_TIMEOUT_ENV, 10.0)
     try:
         deadline = time.monotonic() + 30
         while time.monotonic() < deadline:
@@ -65,15 +113,17 @@ def main() -> None:
         except subprocess.TimeoutExpired:
             process.kill()
             process.wait(timeout=5)
-        deadline = time.monotonic() + 10
-        while time.monotonic() < deadline and any(_running(pid) for pid in children):
-            time.sleep(0.2)
-        survivors = [pid for pid in children if _running(pid)]
+        reclaim_started = time.monotonic()
+        survivors = _wait_for_reclamation(children, reclaim_timeout)
         if survivors:
+            details = "; ".join(_process_details(pid) for pid in survivors)
             for pid in survivors:
                 subprocess.run(["/bin/kill", str(pid)], check=False)
-            raise RuntimeError(f"Sidecar was not reclaimed after app exit: {survivors}")
-    print("Sidecar exit reclamation: PASS")
+            raise RuntimeError(
+                f"Sidecar was not reclaimed within {reclaim_timeout:.1f}s after app exit: {details}"
+            )
+    elapsed = time.monotonic() - reclaim_started
+    print(f"Sidecar exit reclamation: PASS ({elapsed:.1f}s)")
 
 
 if __name__ == "__main__":

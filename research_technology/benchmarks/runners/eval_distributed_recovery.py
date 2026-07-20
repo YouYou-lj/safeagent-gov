@@ -12,13 +12,15 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-ROOT = Path(__file__).resolve().parents[2]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+RESEARCH_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = RESEARCH_ROOT.parent
+COMPOSE_FILE = PROJECT_ROOT / "research_technology/reproducibility/docker/docker-compose.yml"
+if str(RESEARCH_ROOT) not in sys.path:
+    sys.path.insert(0, str(RESEARCH_ROOT))
 
 from benchmarks.runners.common import runtime_environment
 
-RESULT = ROOT / "benchmarks" / "results" / "distributed_recovery_v1.json"
+RESULT = RESEARCH_ROOT / "benchmarks" / "results" / "distributed_recovery_v1.json"
 TERMINAL = {"succeeded", "failed", "rejected"}
 
 
@@ -30,7 +32,7 @@ def _run(
 ) -> str:
     completed = subprocess.run(
         command,
-        cwd=ROOT,
+        cwd=PROJECT_ROOT,
         env=env,
         capture_output=True,
         text=True,
@@ -44,7 +46,11 @@ def _run(
 
 
 def _compose(*arguments: str, env: dict[str, str] | None = None, timeout: float = 120.0) -> str:
-    return _run(["docker", "compose", *arguments], env=env, timeout=timeout)
+    return _run(
+        ["docker", "compose", "-f", str(COMPOSE_FILE), *arguments],
+        env=env,
+        timeout=timeout,
+    )
 
 
 def _probe(action: str, *arguments: str) -> dict[str, Any]:
@@ -54,7 +60,7 @@ def _probe(action: str, *arguments: str) -> dict[str, Any]:
         "backend",
         "python",
         "-m",
-        "scripts.distributed_task_probe",
+        "research_technology.reproducibility.scripts.distributed_task_probe",
         action,
         *arguments,
         timeout=30.0,

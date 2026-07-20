@@ -79,6 +79,8 @@ fn start_sidecar(app: &AppHandle) -> Result<(), String> {
             port.to_string(),
             "--data-dir".to_string(),
             data_dir.to_string_lossy().into_owned(),
+            "--parent-pid".to_string(),
+            std::process::id().to_string(),
         ]);
     let (mut events, child) = command
         .spawn()
