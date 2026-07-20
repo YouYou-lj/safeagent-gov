@@ -12,6 +12,8 @@ import argparse
 import json
 import os
 import shutil
+import threading
+from collections.abc import Callable
 from pathlib import Path
 from typing import Final
 
@@ -66,13 +68,31 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run the GovSafeAgent desktop Sidecar")
     parser.add_argument("--port", type=int, required=True)
     parser.add_argument("--data-dir", type=Path)
+    parser.add_argument("--parent-pid", type=int)
     return parser
+
+
+def _watch_parent(
+    parent_pid: int,
+    stop: threading.Event,
+    on_parent_exit: Callable[[], None],
+    *,
+    interval: float = 0.25,
+) -> None:
+    """Request shutdown once the Sidecar is no longer owned by its Tauri host."""
+
+    while not stop.wait(interval):
+        if os.getppid() != parent_pid:
+            on_parent_exit()
+            return
 
 
 def main() -> None:
     args = _parser().parse_args()
     if not 1024 <= args.port <= 65535:
         raise SystemExit("--port must be between 1024 and 65535")
+    if args.parent_pid is not None and args.parent_pid <= 1:
+        raise SystemExit("--parent-pid must identify a live application process")
     from safeagent_gov.paths import desktop_application_data_dir
 
     runtime_paths = configure_desktop_environment(args.data_dir or desktop_application_data_dir())
@@ -98,7 +118,7 @@ def main() -> None:
         "pid": os.getpid(),
     }
     print(f"{READY_PREFIX}{json.dumps(ready, ensure_ascii=False, separators=(',', ':'))}", flush=True)
-    uvicorn.run(
+    config = uvicorn.Config(
         app,
         host="127.0.0.1",
         port=args.port,
@@ -106,6 +126,23 @@ def main() -> None:
         server_header=False,
         log_level="warning",
     )
+    server = uvicorn.Server(config)
+    watcher_stop = threading.Event()
+    watcher: threading.Thread | None = None
+    if args.parent_pid is not None:
+        watcher = threading.Thread(
+            target=_watch_parent,
+            args=(args.parent_pid, watcher_stop, lambda: setattr(server, "should_exit", True)),
+            name="safeagent-parent-watch",
+            daemon=True,
+        )
+        watcher.start()
+    try:
+        server.run()
+    finally:
+        watcher_stop.set()
+        if watcher is not None:
+            watcher.join(timeout=1)
 
 
 if __name__ == "__main__":

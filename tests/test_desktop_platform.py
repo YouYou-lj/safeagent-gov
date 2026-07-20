@@ -180,6 +180,9 @@ def test_macos_ci_builds_native_architectures_and_release_requires_apple_credent
     assert "adhoc_sign_app.py" not in release_script
     assert "stapler validate" in release_script
 
+    rust_host = (ROOT / "desktop" / "src-tauri" / "src" / "lib.rs").read_text(encoding="utf-8")
+    assert '"--parent-pid".to_string()' in rust_host
+
 
 def test_github_actions_use_node24_compatible_action_versions() -> None:
     workflows = ROOT / ".github" / "workflows"

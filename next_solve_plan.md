@@ -5,7 +5,7 @@ _执行日期：2026-07-20；起始基线：`main@f1d097d`_
 ## 📋 执行结论
 
 - 实际测试数据集不上传到公开 GitHub 仓库；公共 CI 继续运行单元测试、机制测试和合成测试。
-- macOS sidecar 回收检查已改为可配置的 30 秒窗口，并补充 zombie 识别、进程状态和超时诊断。
+- macOS sidecar 增加 Tauri 父进程监视与主动退出，并补充可配置窗口、zombie 识别、进程状态和超时诊断。
 - macOS 普通 CI 已扩展为 Apple Silicon 与 Intel 双架构原生构建，产物名称包含架构。
 - 受保护的 macOS Release 工作流已经建立，正式签名、公证和 Stapling 只读取 GitHub Secrets。
 - GitHub Actions 官方依赖已升级，Linux、Windows、macOS 和 Release 工作流使用当前有效版本。
@@ -16,7 +16,7 @@ _执行日期：2026-07-20；起始基线：`main@f1d097d`_
 
 | 工作项 | 实现 | 本地证据 | 状态 |
 | --- | --- | --- | --- |
-| macOS sidecar 生命周期 | 可配置回收时限、zombie 判定、PID/PPID/状态诊断 | App、DMG、sidecar 启停和 1 秒回收通过 | 已完成 |
+| macOS sidecar 生命周期 | 监视 Tauri 父 PID、可配置回收时限、zombie 判定、PID/PPID/状态诊断 | App、DMG、sidecar 启停和 1.3 秒回收通过 | 已完成 |
 | macOS 双架构 CI | `macos-14` 构建 `aarch64`，`macos-15-intel` 构建 `x86_64` | 工作流静态测试通过 | 待云端验收 |
 | macOS 正式发布链 | 独立受保护工作流导入证书与 API Key，执行签名、公证、Stapling 和 Gatekeeper 检查 | 脚本语法和秘密边界测试通过 | 待 Apple 凭据验收 |
 | Actions 升级 | checkout v6、setup-node v6、setup-uv v8.3.2、artifact v7/v8 | 工作流 YAML 和平台边界测试通过 | 待云端验收 |

@@ -11,7 +11,7 @@ cd desktop
 bash mac/build-mac.sh
 ```
 
-该脚本构建当前 CPU 架构的 PyInstaller sidecar、Tauri App 和 DMG，并执行 sidecar 健康检查、App 启动、应用退出后的进程回收、签名结构检查和 DMG 校验。可通过 `SAFEAGENT_MAC_RECLAIM_TIMEOUT_SECONDS` 调整较慢 runner 的回收观察窗口，CI 使用 30 秒。
+该脚本构建当前 CPU 架构的 PyInstaller sidecar、Tauri App 和 DMG，并执行 sidecar 健康检查、App 启动、应用退出后的进程回收、签名结构检查和 DMG 校验。Sidecar 监视 Tauri 父进程，宿主被信号终止时也会主动关闭服务；可通过 `SAFEAGENT_MAC_RECLAIM_TIMEOUT_SECONDS` 调整较慢 runner 的回收观察窗口，CI 使用 30 秒。
 
 双架构 GitHub 工作流分别使用 `macos-14` 的 Apple Silicon runner 和 `macos-15-intel` 的 Intel runner，产物名明确包含 `aarch64` 或 `x86_64`。[^1]
 
