@@ -65,7 +65,7 @@ _执行日期：2026-07-20；起始基线：`main@f1d097d`_
 
 ## 🧪 验收记录
 
-- Python：255 passed、1 skipped，覆盖率 85.97%；跳过项仅为本地未提供的 Router 数据集。
+- Python：全量测试通过，覆盖率高于 85%；仅本地未提供的 Router 数据集用例按策略跳过。
 - macOS：本机 `.app`、`.dmg`、ad-hoc 签名、健康检查、启动和 sidecar 回收通过。
 - Redis/Dramatiq：真实 Worker `SIGKILL` 后恢复成功，`delivery_count=2`、`recovered_count=1`、审计完整、AOF 重启后状态保留、危险动作执行数为 0。
 - 前端：lint、typecheck 和 Vitest 通过。
